@@ -46,7 +46,15 @@ docker build --network=host -t kedara-rag:py311 .
 docker run --rm --network=host -v "${PWD}:/app" kedara-rag:py311 python -m src.index_builder
 ```
 
-> **Offline Tokenizer Cache**: `Dockerfile` sets `TIKTOKEN_CACHE_DIR=/app/docker/tiktoken_cache` (containing the SHA-256-verified `cl100k_base` BPE file `9b5ad71b2ce5302211f9c61530b329a4922fc6a4`), so `tiktoken` does not need to contact `openaipublic.blob.core.windows.net` at runtime. If using an older container image, pass `-e TIKTOKEN_CACHE_DIR=/app/docker/tiktoken_cache`.
+> **First-Time Downloads & Offline Cache Setup**:
+> - **Online (default)**: On first run, `tiktoken` downloads `cl100k_base.tiktoken` from `openaipublic.blob.core.windows.net` (into `/tmp/data-gym-cache`), and `sentence-transformers` downloads `all-MiniLM-L6-v2` from Hugging Face Hub (into `~/.cache/huggingface`). Both are excluded from Git (no model weights or unverified-redistribution tokenizer blobs are committed).
+> - **Offline / Restricted Networks (Windows PowerShell)**: Mount your existing host caches read-only and set `HF_HUB_OFFLINE=1`:
+>   ```powershell
+>   docker run --rm -e HF_HUB_OFFLINE=1 `
+>     -v "${env:USERPROFILE}\.cache\huggingface:/root/.cache/huggingface:ro" `
+>     -v "${env:LOCALAPPDATA}\Temp\data-gym-cache:/tmp/data-gym-cache:ro" `
+>     -v "${PWD}:/app" kedara-rag:py311 python -m src.index_builder
+>   ```
 
 3. Run tests or ask a question:
 
