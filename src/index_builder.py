@@ -1,5 +1,6 @@
 """Build and persist dual FAISS indexes (256-token and 512-token) from the corpus snapshot."""
 
+import argparse
 from pathlib import Path
 from typing import Dict, List
 
@@ -45,3 +46,27 @@ def build_dual_indexes(
         stores[size] = store
 
     return stores
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Build 256-token and 512-token FAISS indexes from data/processed/sections.jsonl."
+    )
+    parser.add_argument("--processed-dir", type=Path, default=PROCESSED_DIR)
+    parser.add_argument("--index-dir", type=Path, default=INDEX_DIR)
+    args = parser.parse_args()
+
+    stores = build_dual_indexes(
+        processed_dir=args.processed_dir,
+        index_base_dir=args.index_dir,
+    )
+    for size, store in sorted(stores.items()):
+        print(
+            f"Built chunks_{size} index in {args.index_dir / f'chunks_{size}'}: "
+            f"{store.index.ntotal} vectors"
+        )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

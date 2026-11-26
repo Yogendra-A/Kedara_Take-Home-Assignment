@@ -55,8 +55,34 @@ def citation_correctness(answerable_outcomes: Sequence[Dict[str, Any]]) -> Optio
     return correct / len(reviewed)
 
 
+def _is_provider_error(outcome: Dict[str, Any]) -> bool:
+    return outcome.get("error_type") == "provider_error" or outcome.get("failure_category") == "provider_error"
+
+
+def _is_missing_citations(outcome: Dict[str, Any]) -> bool:
+    if outcome.get("failure_category") == "missing_citations":
+        return True
+    if _is_provider_error(outcome) or outcome.get("refused"):
+        return False
+    return (
+        outcome.get("error_type") == "malformed_citations"
+        and not outcome.get("cited_handles")
+    )
+
+
+def _is_malformed_citations(outcome: Dict[str, Any]) -> bool:
+    if outcome.get("failure_category") == "malformed_citations":
+        return True
+    if _is_provider_error(outcome) or outcome.get("refused"):
+        return False
+    return (
+        outcome.get("error_type") == "malformed_citations"
+        and bool(outcome.get("cited_handles"))
+    )
+
+
 def summarize_metrics(outcomes: Sequence[Dict[str, Any]], k: int = 5) -> Dict[str, Any]:
-    """Compute summary retrieval, refusal, and human-reviewed citation metrics."""
+    """Compute summary retrieval, refusal, failure-breakdown, and human-reviewed citation metrics."""
     answerable = [o for o in outcomes if o.get("answerability") == "answerable"]
     unanswerable = [o for o in outcomes if o.get("answerability") == "unanswerable"]
 
@@ -69,6 +95,26 @@ def summarize_metrics(outcomes: Sequence[Dict[str, Any]], k: int = 5) -> Dict[st
         for o in answerable
     ]
 
+    provider_error_count = sum(1 for o in outcomes if _is_provider_error(o))
+    missing_citations_count = sum(1 for o in outcomes if _is_missing_citations(o))
+    malformed_citations_count = sum(1 for o in outcomes if _is_malformed_citations(o))
+    initial_failure_recovered_count = sum(
+        1
+        for o in outcomes
+        if o.get("initial_failure") == "malformed_citations"
+        and not o.get("refused")
+        and o.get("citation_valid") is True
+        and not _is_provider_error(o)
+    )
+
+    answered_non_error = [
+        o for o in outcomes if not o.get("refused") and not _is_provider_error(o)
+    ]
+    citation_valid_rate: Optional[float] = None
+    if answered_non_error and any("citation_valid" in o for o in answered_non_error):
+        valid_count = sum(1 for o in answered_non_error if o.get("citation_valid") is True)
+        citation_valid_rate = valid_count / len(answered_non_error)
+
     return {
         "total_questions": len(outcomes),
         "answerable_count": len(answerable),
@@ -77,5 +123,10 @@ def summarize_metrics(outcomes: Sequence[Dict[str, Any]], k: int = 5) -> Dict[st
         f"mrr_at_{k}": (sum(mrr_scores) / len(mrr_scores)) if mrr_scores else None,
         "refusal_recall": refusal_recall(unanswerable),
         "false_refusal_rate": false_refusal_rate(answerable),
+        "citation_valid_rate": citation_valid_rate,
+        "missing_citations_count": missing_citations_count,
+        "malformed_citations_count": malformed_citations_count,
+        "provider_error_count": provider_error_count,
+        "initial_failure_recovered_count": initial_failure_recovered_count,
         "citation_correctness_human_reviewed": citation_correctness(answerable),
     }

@@ -9,7 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install torch --index-url https://download.pytorch.org/whl/cpu && \
-    pip install -r requirements.txt "huggingface-hub>=1.5.0,<2.0"
+    pip install -r requirements.txt
 
 COPY . .
 

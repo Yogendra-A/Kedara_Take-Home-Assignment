@@ -8,6 +8,7 @@ from typing import Any, Dict
 
 from config.settings import LLMConfig, RetrievalConfig
 from eval.run_eval import evaluate_index, load_eval_questions
+from src.generator import build_llm_client
 from src.retriever import SentenceTransformerEmbedder
 
 
@@ -28,6 +29,7 @@ def run_comparison(
     cfg = RetrievalConfig()
     llm_cfg = LLMConfig()
     embedder = SentenceTransformerEmbedder(model_name=cfg.embedding_model)
+    llm_client, _, _ = build_llm_client(llm_cfg)
 
     res_256 = evaluate_index(
         questions=questions,
@@ -35,6 +37,7 @@ def run_comparison(
         top_k=top_k,
         min_score=min_score,
         embedder=embedder,
+        llm_client=llm_client,
         llm_config=llm_cfg,
     )
     res_512 = evaluate_index(
@@ -43,6 +46,7 @@ def run_comparison(
         top_k=top_k,
         min_score=min_score,
         embedder=embedder,
+        llm_client=llm_client,
         llm_config=llm_cfg,
     )
 

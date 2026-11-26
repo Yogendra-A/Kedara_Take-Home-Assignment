@@ -12,9 +12,8 @@ env/
 .env
 .env.local
 
-# Data & generated artifacts (raw downloads and binary indexes)
+# Data & generated artifacts (raw downloads and binary indexes; processed snapshot is committed)
 data/raw/
-data/processed/
 data/index/
 
 # IDE & OS

@@ -22,7 +22,9 @@ REQUIRED_QUESTION_FIELDS = {
 }
 
 
-def load_eval_questions(questions_path: Path) -> List[Dict[str, Any]]:
+def load_eval_questions(
+    questions_path: Path, valid_doc_ids: set[str] | None = None
+) -> List[Dict[str, Any]]:
     """Load and validate evaluation questions from JSON."""
     if not questions_path.exists():
         raise FileNotFoundError(f"Questions file not found: {questions_path}")
@@ -42,11 +44,74 @@ def load_eval_questions(questions_path: Path) -> List[Dict[str, Any]]:
         if not qid or qid in seen_ids:
             raise ValueError(f"Invalid or duplicate question_id: {qid!r}")
         seen_ids.add(qid)
-        if item["answerability"] not in {"answerable", "unanswerable"}:
+
+        qtext = item["question_text"]
+        if not isinstance(qtext, str) or not qtext.strip():
+            raise ValueError(f"Question {qid} must have a non-empty string question_text.")
+
+        qcat = item["question_category"]
+        if not isinstance(qcat, str) or not qcat.strip():
+            raise ValueError(f"Question {qid} must have a non-empty string question_category.")
+
+        answerability = item["answerability"]
+        if answerability not in {"answerable", "unanswerable"}:
             raise ValueError(
-                f"Question {qid} has invalid answerability: {item['answerability']!r}"
+                f"Question {qid} has invalid answerability: {answerability!r}"
             )
+
+        expected_docs = item["expected_source_doc_ids"]
+        if not isinstance(expected_docs, list) or not all(
+            isinstance(d, str) and d.strip() for d in expected_docs
+        ):
+            raise ValueError(
+                f"Question {qid} expected_source_doc_ids must be a list of non-empty strings."
+            )
+
+        expected_facts = item["expected_answer_facts"]
+        if not isinstance(expected_facts, list) or not all(
+            isinstance(f, str) and f.strip() for f in expected_facts
+        ):
+            raise ValueError(
+                f"Question {qid} expected_answer_facts must be a list of non-empty strings."
+            )
+
+        if answerability == "answerable":
+            if not expected_docs:
+                raise ValueError(
+                    f"Answerable question {qid} must specify at least one expected_source_doc_id."
+                )
+            if not expected_facts:
+                raise ValueError(
+                    f"Answerable question {qid} must specify at least one expected_answer_fact."
+                )
+        elif expected_docs:
+            raise ValueError(
+                f"Unanswerable question {qid} must have empty expected_source_doc_ids."
+            )
+
+        if valid_doc_ids is not None:
+            unknown = [d for d in expected_docs if d not in valid_doc_ids]
+            if unknown:
+                raise ValueError(
+                    f"Question {qid} references unknown doc_id(s): {unknown}"
+                )
     return items
+
+
+def _classify_failure_category(
+    refused: bool,
+    citation_valid: bool,
+    error_type: str,
+    cited_handles: List[str],
+) -> str:
+    """Separate missing citations, malformed citation handles, and provider errors."""
+    if error_type == "provider_error":
+        return "provider_error"
+    if refused:
+        return "none"
+    if not citation_valid:
+        return "missing_citations" if not cited_handles else "malformed_citations"
+    return "none"
 
 
 def evaluate_index(
@@ -96,6 +161,13 @@ def evaluate_index(
             error_type = "provider_error"
             initial_failure = "provider_error"
 
+        failure_category = _classify_failure_category(
+            refused=refused,
+            citation_valid=citation_valid,
+            error_type=error_type,
+            cited_handles=cited_handles,
+        )
+
         outcomes.append(
             {
                 "question_id": q["question_id"],
@@ -117,6 +189,7 @@ def evaluate_index(
                 "refused": refused,
                 "citation_valid": citation_valid,
                 "error_type": error_type,
+                "failure_category": failure_category,
                 "initial_failure": initial_failure,
                 "human_citation_correct": None,
             }
@@ -139,9 +212,23 @@ def main() -> int:
     parser.add_argument("--top-k", type=int, default=RetrievalConfig().top_k)
     parser.add_argument("--min-score", type=float, default=0.2)
     parser.add_argument("--out", type=Path, default=None)
+    parser.add_argument(
+        "--validate-only",
+        action="store_true",
+        help="Validate evaluation JSON schema and doc_ids against the corpus without running the LLM.",
+    )
     args = parser.parse_args()
 
-    questions = load_eval_questions(args.questions)
+    valid_doc_ids: set[str] | None = None
+    sections_path = Path("data/processed/sections.jsonl")
+    if sections_path.exists():
+        valid_doc_ids = {
+            json.loads(line)["doc_id"]
+            for line in sections_path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        }
+
+    questions = load_eval_questions(args.questions, valid_doc_ids=valid_doc_ids)
     if not questions:
         print(
             f"No questions found in {args.questions}. "
@@ -149,6 +236,15 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
+
+    if args.validate_only:
+        ans = sum(1 for q in questions if q["answerability"] == "answerable")
+        unans = sum(1 for q in questions if q["answerability"] == "unanswerable")
+        print(
+            f"Validated {len(questions)} questions in {args.questions} "
+            f"({ans} answerable, {unans} unanswerable)."
+        )
+        return 0
 
     report = evaluate_index(
         questions=questions,

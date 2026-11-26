@@ -1,5 +1,6 @@
 """Manifest validation, corpus download, extraction, deduplication, and snapshot persistence."""
 
+import argparse
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass
 import json
@@ -223,3 +224,42 @@ def load_corpus_snapshot(processed_dir: Path = PROCESSED_DIR) -> List[DocumentSe
             if line:
                 sections.append(DocumentSection(**json.loads(line)))
     return sections
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Fetch, extract, deduplicate, and snapshot the Kedara corpus from data/manifest.json."
+    )
+    parser.add_argument("--manifest", type=Path, default=MANIFEST_PATH)
+    parser.add_argument("--raw-dir", type=Path, default=RAW_DIR)
+    parser.add_argument("--processed-dir", type=Path, default=PROCESSED_DIR)
+    parser.add_argument("--min-chars", type=int, default=100)
+    parser.add_argument("--timeout", type=int, default=20)
+    parser.add_argument(
+        "--force-download",
+        action="store_true",
+        help="Re-download raw files even if already present in data/raw/.",
+    )
+    args = parser.parse_args()
+
+    sections, records = ingest_corpus(
+        manifest_path=args.manifest,
+        raw_dir=args.raw_dir,
+        processed_dir=args.processed_dir,
+        min_chars=args.min_chars,
+        timeout=args.timeout,
+        skip_existing_raw=not args.force_download,
+    )
+    ok_count = sum(1 for r in records if r.extraction_ok)
+    print(
+        f"Corpus snapshot saved to {args.processed_dir}: "
+        f"{ok_count}/{len(records)} documents extracted, {len(sections)} sections."
+    )
+    failed = [r for r in records if not r.extraction_ok]
+    for r in failed:
+        print(f"  FAILED: {r.doc_id} ({r.error})")
+    return 0 if ok_count > 0 else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

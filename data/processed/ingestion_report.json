@@ -1,0 +1,295 @@
+{
+  "total_manifest_docs": 25,
+  "fetched_ok": 25,
+  "extracted_ok": 24,
+  "failed_docs": [
+    {
+      "doc_id": "pib_vayoshreshtha_samman",
+      "title": "Vayoshreshtha Samman National Awards for Senior Citizens (PIB PDF)",
+      "source_url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2022/aug/doc20228582001.pdf",
+      "format": "pdf",
+      "fetch_ok": true,
+      "extraction_ok": false,
+      "section_count": 0,
+      "char_count": 0,
+      "error": "extraction_insufficient: sections=0, chars=0"
+    }
+  ],
+  "records": [
+    {
+      "doc_id": "mwpsc_act_faq_dosje",
+      "title": "Maintenance and Welfare of Parents and Senior Citizens Act, 2007 - Senior Citizens Welfare FAQ (DoSJE)",
+      "source_url": "https://www.dosje.gov.in/organisation/senior-citizens-welfarescw/faq/",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 6720,
+      "error": ""
+    },
+    {
+      "doc_id": "elderline_14567",
+      "title": "Elderline - National Helpline for Senior Citizens (14567) (DoSJE)",
+      "source_url": "https://www.dosje.gov.in/elderline",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 7,
+      "char_count": 1475,
+      "error": ""
+    },
+    {
+      "doc_id": "dosje_avyay",
+      "title": "Atal Vayo Abhyuday Yojana (AVYAY) Umbrella Scheme (DoSJE)",
+      "source_url": "https://www.dosje.gov.in/schemes-and-services/atal-vayo-abhyuday-yojana-avyay/",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 9,
+      "char_count": 6849,
+      "error": ""
+    },
+    {
+      "doc_id": "dosje_ipsrc",
+      "title": "Integrated Programme for Senior Citizens (IPSrC) (DoSJE)",
+      "source_url": "https://www.dosje.gov.in/schemes-and-services/integrated-programme-for-senior-citizens-ipsrc/",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 6,
+      "char_count": 155207,
+      "error": ""
+    },
+    {
+      "doc_id": "dosje_rvy",
+      "title": "Rashtriya Vayoshri Yojana (RVY) (DoSJE)",
+      "source_url": "https://www.dosje.gov.in/schemes-and-services/rashtriya-vayoshri-yojana-rvy/",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 32,
+      "char_count": 29377,
+      "error": ""
+    },
+    {
+      "doc_id": "nisd_senior_citizens",
+      "title": "National Institute of Social Defence (NISD) - Old Age Care & Geriatric Training",
+      "source_url": "https://www.nisd.gov.in/",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 4,
+      "char_count": 1636,
+      "error": ""
+    },
+    {
+      "doc_id": "pib_avyay_umbrella",
+      "title": "Atal Vayo Abhyuday Yojana (AVYAY) Key Components & Guidelines (PIB)",
+      "source_url": "https://www.pib.gov.in/PressNoteDetails.aspx?NoteId=160574&ModuleId=3&reg=3&lang=1",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 2,
+      "char_count": 17564,
+      "error": ""
+    },
+    {
+      "doc_id": "pib_ipsrc_grants",
+      "title": "Integrated Programme for Senior Citizens (IPSrC) Grants & Homes (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1844991&reg=48&lang=2",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 6022,
+      "error": ""
+    },
+    {
+      "doc_id": "pib_ignoaps_rvy",
+      "title": "IGNOAPS and Rashtriya Vayoshri Yojana Implementation Overview (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2226202&reg=23&lang=1",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 7186,
+      "error": ""
+    },
+    {
+      "doc_id": "pib_nalsa_mwpsc",
+      "title": "NALSA Legal Services to Senior Citizens & MWPSC Act Implementation (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2039569&reg=3&lang=2",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 4032,
+      "error": ""
+    },
+    {
+      "doc_id": "pib_sage_portal",
+      "title": "SAGE (Seniorcare Ageing Growth Engine) Initiative & Portal (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1724414",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 4591,
+      "error": ""
+    },
+    {
+      "doc_id": "pib_nphce",
+      "title": "National Programme for Health Care of the Elderly (NPHCE) Implementation & Geriatric Centres (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2183196",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 22869,
+      "error": ""
+    },
+    {
+      "doc_id": "ab_pmjay_70plus_pib",
+      "title": "Ayushman Bharat PM-JAY Health Coverage Expansion for Senior Citizens Aged 70+ (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2330009&reg=6&lang=1",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 4135,
+      "error": ""
+    },
+    {
+      "doc_id": "jeevan_pramaan",
+      "title": "Jeevan Pramaan - Digital Life Certificate for Pensioners",
+      "source_url": "https://jeevanpramaan.gov.in/",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 13,
+      "char_count": 4573,
+      "error": ""
+    },
+    {
+      "doc_id": "pib_jeevan_pramaan_dlc",
+      "title": "Nationwide Digital Life Certificate (Jeevan Pramaan) Campaign (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2334451&reg=22&lang=1",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 4,
+      "char_count": 300,
+      "error": ""
+    },
+    {
+      "doc_id": "scss_pib",
+      "title": "Senior Citizens Savings Scheme (SCSS) Deposit Limit & Updates (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2078393&reg=3&lang=1",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 5,
+      "char_count": 349,
+      "error": ""
+    },
+    {
+      "doc_id": "rbi_doorstep_banking",
+      "title": "RBI Guidelines on Doorstep Banking Facilities for Senior Citizens",
+      "source_url": "https://www.rbi.org.in/commonperson/English/Scripts/Notification.aspx?Id=2613",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 20916,
+      "error": ""
+    },
+    {
+      "doc_id": "rbi_senior_facilities",
+      "title": "RBI Banking Facilities for Senior Citizens and Differently Abled Persons",
+      "source_url": "https://www.rbi.org.in/Commonperson/english/scripts/Notification.aspx?Id=2647",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 7103,
+      "error": ""
+    },
+    {
+      "doc_id": "incometax_senior_citizens",
+      "title": "Income Tax Return & Provisions for Senior and Super Senior Citizens (Income Tax Portal)",
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 5,
+      "char_count": 20526,
+      "error": ""
+    },
+    {
+      "doc_id": "epfo_eps95",
+      "title": "Employees' Pension Scheme (EPS-95) (EPFO)",
+      "source_url": "https://pmvbry.epfindia.gov.in/pension-scheme-eps/",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 6,
+      "char_count": 3190,
+      "error": ""
+    },
+    {
+      "doc_id": "pib_apy_overview",
+      "title": "Atal Pension Yojana (APY) Eligibility and Income Tax Rules (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2254487&reg=3&lang=1",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 2002,
+      "error": ""
+    },
+    {
+      "doc_id": "pib_apy_enrollments",
+      "title": "Atal Pension Yojana (APY) Guaranteed Pension & Coverage (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2259251",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 9502,
+      "error": ""
+    },
+    {
+      "doc_id": "pib_vayoshreshtha_samman",
+      "title": "Vayoshreshtha Samman National Awards for Senior Citizens (PIB PDF)",
+      "source_url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2022/aug/doc20228582001.pdf",
+      "format": "pdf",
+      "fetch_ok": true,
+      "extraction_ok": false,
+      "section_count": 0,
+      "char_count": 0,
+      "error": "extraction_insufficient: sections=0, chars=0"
+    },
+    {
+      "doc_id": "pib_mwpsc_act_implementation",
+      "title": "Implementation of MWPSC Act 2007 and State Action Plans for Senior Citizens (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1781358",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 25709,
+      "error": ""
+    },
+    {
+      "doc_id": "pib_senior_welfare_2",
+      "title": "Atal Vayo Abhyuday Yojana & Elderline Support Overview (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2299181",
+      "format": "html",
+      "fetch_ok": true,
+      "extraction_ok": true,
+      "section_count": 1,
+      "char_count": 5438,
+      "error": ""
+    }
+  ]
+}
