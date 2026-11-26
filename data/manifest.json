@@ -122,12 +122,12 @@
   {
     "doc_id": "ab_pmjay_70plus_pib",
     "title": "Ayushman Bharat PM-JAY Health Coverage Expansion for Senior Citizens Aged 70+ (PIB)",
-    "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2053953",
+    "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2330009&reg=6&lang=1",
     "category": "Healthcare",
     "geographic_scope": "National",
     "format": "html",
-    "fetch_status": "verified_ok (135524 bytes)",
-    "extraction_status": "verified_ok (1 section, 5175 chars)"
+    "fetch_status": "verified_ok",
+    "extraction_status": "verified_ok (1 section, 4135 chars)"
   },
   {
     "doc_id": "jeevan_pramaan",

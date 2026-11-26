@@ -77,6 +77,20 @@ def extract_html_sections(
     current_heading = "Overview"
     current_lines: List[str] = []
 
+    def _append_section(heading: str, lines: List[str]) -> None:
+        unique_lines = list(dict.fromkeys(lines))
+        joined = clean_text("\n".join(unique_lines))
+        if joined:
+            sections.append(
+                DocumentSection(
+                    doc_id=doc_id,
+                    title=title,
+                    source_url=source_url,
+                    section=heading,
+                    text=joined,
+                )
+            )
+
     target_tags = ["h1", "h2", "h3", "h4", "p", "li", "td", "th"]
     for elem in root.find_all(target_tags):
         # Skip container tags (e.g. <li> or <td>) that wrap other target tags to avoid duplicate text.
@@ -89,34 +103,14 @@ def extract_html_sections(
 
         if tag_name in {"h1", "h2", "h3", "h4"}:
             if current_lines:
-                joined = clean_text("\n".join(current_lines))
-                if joined:
-                    sections.append(
-                        DocumentSection(
-                            doc_id=doc_id,
-                            title=title,
-                            source_url=source_url,
-                            section=current_heading,
-                            text=joined,
-                        )
-                    )
+                _append_section(current_heading, current_lines)
                 current_lines = []
             current_heading = text
         else:
             current_lines.append(text)
 
     if current_lines:
-        joined = clean_text("\n".join(current_lines))
-        if joined:
-            sections.append(
-                DocumentSection(
-                    doc_id=doc_id,
-                    title=title,
-                    source_url=source_url,
-                    section=current_heading,
-                    text=joined,
-                )
-            )
+        _append_section(current_heading, current_lines)
 
     return sections
 

@@ -1,25 +1,25 @@
-"""Grounded answer generation with strict citation validation and refusal handling."""
+"""Grounded answer generation with short source handles (S1..Sn), citation resolution, and failure categorization."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 import re
-from typing import TYPE_CHECKING, List, Protocol
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Protocol
 
 from config.settings import LLMConfig, REFUSAL_TEXT
 
 if TYPE_CHECKING:
     from src.retriever import RetrievedChunk
 
-CITATION_PATTERN = re.compile(r"\[([a-zA-Z0-9_-]+__c\d+__\d+)\]")
+HANDLE_PATTERN = re.compile(r"[\[\u3010](S\d+)[\]\u3011]")
 
 SYSTEM_PROMPT = f"""You are a careful assistant answering questions about Indian senior citizen welfare schemes, laws, healthcare, pensions, and banking.
 Rules:
-1. Answer ONLY using the provided context chunks. Do NOT use outside knowledge or invent facts.
-2. Every factual statement must include an inline citation using the exact chunk ID in square brackets, e.g. [doc_id__c256__0000].
-3. If the provided context does not contain enough information to answer the question, respond with the exact string:
+1. Answer ONLY using the provided numbered sources. Do NOT use outside knowledge or invent facts.
+2. Cite every factual statement inline using the exact source handle in square brackets, such as [S1] or [S2], using ONLY the handles provided in the context.
+3. If the provided sources do not contain enough information to answer the question, respond with the exact string:
 {REFUSAL_TEXT}
-4. Do not cite any chunk ID that is not present in the provided context."""
+4. Do not cite any handle that is not in the provided context."""
 
 
 class LLMClient(Protocol):
@@ -35,7 +35,7 @@ class GeneratorError(RuntimeError):
 
 @dataclass(frozen=True)
 class GroundedAnswer:
-    """Result of grounded answer generation, including preserved retrieved evidence."""
+    """Result of grounded answer generation with resolved provenance and failure category."""
 
     question: str
     answer: str
@@ -45,6 +45,16 @@ class GroundedAnswer:
     model: str
     refused: bool
     citation_valid: bool
+    error_type: str = "none"
+    initial_failure: Optional[str] = None
+    cited_handles: List[str] = None  # type: ignore[assignment]
+    citation_provenance: List[Dict[str, Any]] = None  # type: ignore[assignment]
+
+    def __post_init__(self) -> None:
+        if self.cited_handles is None:
+            object.__setattr__(self, "cited_handles", [])
+        if self.citation_provenance is None:
+            object.__setattr__(self, "citation_provenance", [])
 
 
 class GroqClient:
@@ -142,29 +152,60 @@ def build_llm_client(config: LLMConfig | None = None) -> tuple[LLMClient, str, s
     raise GeneratorError(f"Unsupported LLM_PROVIDER: {cfg.provider}")
 
 
+def build_handle_map(retrieved_chunks: List[RetrievedChunk]) -> Dict[str, RetrievedChunk]:
+    """Deterministically map S1..Sn handles to retrieved chunks in rank order."""
+    return {f"S{i}": rc for i, rc in enumerate(retrieved_chunks, start=1)}
+
+
 def format_context(retrieved_chunks: List[RetrievedChunk]) -> str:
-    """Format retrieved chunks with stable chunk IDs and provenance for the prompt."""
+    """Format retrieved chunks with deterministic short source handles [S1]..[Sn]."""
+    handle_map = build_handle_map(retrieved_chunks)
     blocks: List[str] = []
-    for rc in retrieved_chunks:
+    for handle, rc in handle_map.items():
         c = rc.chunk
         blocks.append(
-            f"[{c.chunk_id}] (doc_id={c.doc_id}, title={c.title}, section={c.section}, "
+            f"[{handle}] (title={c.title}, section={c.section}, doc_id={c.doc_id}, "
             f"score={rc.score:.4f}, url={c.source_url})\n{c.text}"
         )
     return "\n\n".join(blocks)
 
 
-def extract_and_validate_citations(
-    answer_text: str, retrieved_chunks: List[RetrievedChunk]
-) -> tuple[List[str], bool]:
-    """Extract [chunk_id] citations and verify every cited ID belongs to retrieved_chunks."""
-    allowed_ids = {rc.chunk.chunk_id for rc in retrieved_chunks}
-    found = CITATION_PATTERN.findall(answer_text)
-    unique_found = list(dict.fromkeys(found))
-    if not unique_found:
-        return [], False
-    all_valid = all(cid in allowed_ids for cid in unique_found)
-    return unique_found, all_valid
+def resolve_handle_citations(
+    answer_text: str, handle_map: Dict[str, RetrievedChunk]
+) -> tuple[List[str], List[str], List[Dict[str, Any]], bool]:
+    """Extract [S1]..[Sn] handles, validate membership, and resolve to chunk_ids and provenance."""
+    found_handles = list(dict.fromkeys(HANDLE_PATTERN.findall(answer_text)))
+    if not found_handles:
+        return [], [], [], False
+
+    if not all(h in handle_map for h in found_handles):
+        return found_handles, [], [], False
+
+    resolved_chunk_ids: List[str] = []
+    provenance: List[Dict[str, Any]] = []
+    for h in found_handles:
+        rc = handle_map[h]
+        c = rc.chunk
+        resolved_chunk_ids.append(c.chunk_id)
+        provenance.append(
+            {
+                "handle": h,
+                "chunk_id": c.chunk_id,
+                "doc_id": c.doc_id,
+                "title": c.title,
+                "section": c.section,
+                "source_url": c.source_url,
+                "score": rc.score,
+            }
+        )
+    return found_handles, resolved_chunk_ids, provenance, True
+
+
+def _is_refusal_text(text: str) -> bool:
+    cleaned = text.strip().strip('"').strip("'")
+    return cleaned == REFUSAL_TEXT or (
+        REFUSAL_TEXT in cleaned and len(cleaned) <= len(REFUSAL_TEXT) + 10
+    )
 
 
 def generate_grounded_answer(
@@ -174,8 +215,10 @@ def generate_grounded_answer(
     config: LLMConfig | None = None,
     min_top_score: float = 0.0,
 ) -> GroundedAnswer:
-    """Generate a grounded answer with validated chunk-level citations or exact refusal."""
+    """Generate a grounded answer with S1..Sn citation resolution, single format retry, and failure separation."""
     cfg = config or LLMConfig()
+    default_model = cfg.groq_model if cfg.provider == "groq" else cfg.gemini_model
+
     if not question.strip() or not retrieved_chunks:
         return GroundedAnswer(
             question=question,
@@ -183,9 +226,10 @@ def generate_grounded_answer(
             citations=[],
             retrieved_chunks=retrieved_chunks,
             provider=cfg.provider,
-            model=cfg.groq_model if cfg.provider == "groq" else cfg.gemini_model,
+            model=default_model,
             refused=True,
             citation_valid=True,
+            error_type="evidence_insufficient",
         )
 
     if min_top_score > 0.0 and retrieved_chunks[0].score < min_top_score:
@@ -195,9 +239,10 @@ def generate_grounded_answer(
             citations=[],
             retrieved_chunks=retrieved_chunks,
             provider=cfg.provider,
-            model=cfg.groq_model if cfg.provider == "groq" else cfg.gemini_model,
+            model=default_model,
             refused=True,
             citation_valid=True,
+            error_type="evidence_insufficient",
         )
 
     if client is None:
@@ -206,11 +251,17 @@ def generate_grounded_answer(
         provider = cfg.provider
         model = getattr(client, "model", "custom")
 
+    handle_map = build_handle_map(retrieved_chunks)
+    valid_handles_str = ", ".join(f"[{h}]" for h in handle_map)
     context_str = format_context(retrieved_chunks)
-    user_prompt = f"Context:\n{context_str}\n\nQuestion: {question}\n\nAnswer:"
-    raw_answer = client.generate(SYSTEM_PROMPT, user_prompt).strip()
+    user_prompt = (
+        f"Available source handles: {valid_handles_str}\n\n"
+        f"Context:\n{context_str}\n\n"
+        f"Question: {question}\n\nAnswer:"
+    )
 
-    if raw_answer == REFUSAL_TEXT or REFUSAL_TEXT in raw_answer and len(raw_answer) <= len(REFUSAL_TEXT) + 5:
+    raw_answer = client.generate(SYSTEM_PROMPT, user_prompt).strip()
+    if _is_refusal_text(raw_answer):
         return GroundedAnswer(
             question=question,
             answer=REFUSAL_TEXT,
@@ -220,28 +271,62 @@ def generate_grounded_answer(
             model=model,
             refused=True,
             citation_valid=True,
+            error_type="evidence_insufficient",
         )
 
-    citations, valid = extract_and_validate_citations(raw_answer, retrieved_chunks)
+    handles, chunk_ids, provenance, valid = resolve_handle_citations(raw_answer, handle_map)
+    initial_failure: Optional[str] = None
+
     if not valid:
-        return GroundedAnswer(
-            question=question,
-            answer=REFUSAL_TEXT,
-            citations=citations,
-            retrieved_chunks=retrieved_chunks,
-            provider=provider,
-            model=model,
-            refused=True,
-            citation_valid=False,
+        initial_failure = "malformed_citations"
+        retry_prompt = (
+            f"{user_prompt}\n{raw_answer}\n\n"
+            f"Your previous response had missing or unknown citations. "
+            f"Rewrite the answer citing ONLY valid handles from ({valid_handles_str}) in square brackets, "
+            f"or respond with exact text: {REFUSAL_TEXT}"
         )
+        retry_answer = client.generate(SYSTEM_PROMPT, retry_prompt).strip()
+        if _is_refusal_text(retry_answer):
+            return GroundedAnswer(
+                question=question,
+                answer=REFUSAL_TEXT,
+                citations=[],
+                retrieved_chunks=retrieved_chunks,
+                provider=provider,
+                model=model,
+                refused=True,
+                citation_valid=True,
+                error_type="evidence_insufficient",
+                initial_failure=initial_failure,
+            )
+        handles, chunk_ids, provenance, valid = resolve_handle_citations(retry_answer, handle_map)
+        if not valid:
+            return GroundedAnswer(
+                question=question,
+                answer=retry_answer,
+                citations=[],
+                retrieved_chunks=retrieved_chunks,
+                provider=provider,
+                model=model,
+                refused=False,
+                citation_valid=False,
+                error_type="malformed_citations",
+                initial_failure=initial_failure,
+                cited_handles=handles,
+            )
+        raw_answer = retry_answer
 
     return GroundedAnswer(
         question=question,
         answer=raw_answer,
-        citations=citations,
+        citations=chunk_ids,
         retrieved_chunks=retrieved_chunks,
         provider=provider,
         model=model,
         refused=False,
         citation_valid=True,
+        error_type="none",
+        initial_failure=initial_failure,
+        cited_handles=handles,
+        citation_provenance=provenance,
     )

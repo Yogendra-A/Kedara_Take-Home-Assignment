@@ -35,7 +35,7 @@ class LLMConfig:
     gemini_api_key: str = os.getenv("GEMINI_API_KEY", "")
     gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
     temperature: float = 0.0
-    max_tokens: int = 512
+    max_tokens: int = 1024
 
 
 def get_index_dir(chunk_size_tokens: int) -> Path:

@@ -9,7 +9,7 @@ from typing import Any, Dict, List
 
 from config.settings import LLMConfig, RetrievalConfig, get_index_dir
 from eval.metrics import summarize_metrics
-from src.generator import LLMClient, generate_grounded_answer
+from src.generator import GeneratorError, LLMClient, generate_grounded_answer
 from src.retriever import Embedder, SentenceTransformerEmbedder, VectorStore
 
 REQUIRED_QUESTION_FIELDS = {
@@ -70,13 +70,32 @@ def evaluate_index(
     outcomes: List[Dict[str, Any]] = []
     for q in questions:
         retrieved = store.search(q["question_text"], top_k=top_k)
-        result = generate_grounded_answer(
-            question=q["question_text"],
-            retrieved_chunks=retrieved,
-            client=llm_client,
-            config=llm_config,
-            min_top_score=min_score,
-        )
+        try:
+            result = generate_grounded_answer(
+                question=q["question_text"],
+                retrieved_chunks=retrieved,
+                client=llm_client,
+                config=llm_config,
+                min_top_score=min_score,
+            )
+            answer = result.answer
+            citations = result.citations
+            cited_handles = result.cited_handles
+            citation_provenance = result.citation_provenance
+            refused = result.refused
+            citation_valid = result.citation_valid
+            error_type = result.error_type
+            initial_failure = result.initial_failure
+        except GeneratorError as exc:
+            answer = f"PROVIDER_ERROR: {exc}"
+            citations = []
+            cited_handles = []
+            citation_provenance = []
+            refused = False
+            citation_valid = False
+            error_type = "provider_error"
+            initial_failure = "provider_error"
+
         outcomes.append(
             {
                 "question_id": q["question_id"],
@@ -91,10 +110,14 @@ def evaluate_index(
                 "retrieved_evidence": [
                     {**asdict(rc.chunk), "score": rc.score} for rc in retrieved
                 ],
-                "answer": result.answer,
-                "citations": result.citations,
-                "refused": result.refused,
-                "citation_valid": result.citation_valid,
+                "answer": answer,
+                "citations": citations,
+                "cited_handles": cited_handles,
+                "citation_provenance": citation_provenance,
+                "refused": refused,
+                "citation_valid": citation_valid,
+                "error_type": error_type,
+                "initial_failure": initial_failure,
                 "human_citation_correct": None,
             }
         )

@@ -79,7 +79,7 @@ class VectorStore:
             self.chunks = []
             return
 
-        texts = [c.text for c in chunks]
+        texts = [f"{c.title} | {c.section}\n{c.text}" for c in chunks]
         embeddings = np.ascontiguousarray(self.embedder.encode(texts), dtype=np.float32)
         if embeddings.ndim != 2 or embeddings.shape[0] != len(chunks):
             raise ValueError(
