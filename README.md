@@ -46,6 +46,8 @@ docker build --network=host -t kedara-rag:py311 .
 docker run --rm --network=host -v "${PWD}:/app" kedara-rag:py311 python -m src.index_builder
 ```
 
+> **Offline Tokenizer Cache**: `Dockerfile` sets `TIKTOKEN_CACHE_DIR=/app/docker/tiktoken_cache` (containing the SHA-256-verified `cl100k_base` BPE file `9b5ad71b2ce5302211f9c61530b329a4922fc6a4`), so `tiktoken` does not need to contact `openaipublic.blob.core.windows.net` at runtime. If using an older container image, pass `-e TIKTOKEN_CACHE_DIR=/app/docker/tiktoken_cache`.
+
 3. Run tests or ask a question:
 
 ```powershell

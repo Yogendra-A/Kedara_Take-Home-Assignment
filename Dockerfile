@@ -4,7 +4,8 @@ WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+    PIP_NO_CACHE_DIR=1 \
+    TIKTOKEN_CACHE_DIR=/app/docker/tiktoken_cache
 
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
