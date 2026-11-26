@@ -1,0 +1,18 @@
+[
+  {
+    "question_id": "TEMPLATE_001",
+    "question_text": "Replace with your manually written answerable question.",
+    "answerability": "answerable",
+    "question_category": "helpline_support",
+    "expected_source_doc_ids": ["elderline_14567"],
+    "expected_answer_facts": ["Toll-free number 14567", "Operational 8 AM to 8 PM"]
+  },
+  {
+    "question_id": "TEMPLATE_002",
+    "question_text": "Replace with your manually written unanswerable question (outside the corpus).",
+    "answerability": "unanswerable",
+    "question_category": "out_of_corpus",
+    "expected_source_doc_ids": [],
+    "expected_answer_facts": []
+  }
+]

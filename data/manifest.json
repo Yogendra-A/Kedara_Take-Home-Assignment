@@ -1,0 +1,252 @@
+[
+  {
+    "doc_id": "mwpsc_act_faq_dosje",
+    "title": "Maintenance and Welfare of Parents and Senior Citizens Act, 2007 - Senior Citizens Welfare FAQ (DoSJE)",
+    "source_url": "https://www.dosje.gov.in/organisation/senior-citizens-welfarescw/faq/",
+    "category": "Legal & Rights",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (188904 bytes)",
+    "extraction_status": "verified_ok (1 section, 6720 chars)"
+  },
+  {
+    "doc_id": "elderline_14567",
+    "title": "Elderline - National Helpline for Senior Citizens (14567) (DoSJE)",
+    "source_url": "https://www.dosje.gov.in/elderline",
+    "category": "Helpline & Support",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (159383 bytes)",
+    "extraction_status": "verified_ok (8 sections, 1530 chars)"
+  },
+  {
+    "doc_id": "dosje_avyay",
+    "title": "Atal Vayo Abhyuday Yojana (AVYAY) Umbrella Scheme (DoSJE)",
+    "source_url": "https://www.dosje.gov.in/schemes-and-services/atal-vayo-abhyuday-yojana-avyay/",
+    "category": "Welfare Schemes",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (195553 bytes)",
+    "extraction_status": "verified_ok (9 sections, 6849 chars)"
+  },
+  {
+    "doc_id": "dosje_ipsrc",
+    "title": "Integrated Programme for Senior Citizens (IPSrC) (DoSJE)",
+    "source_url": "https://www.dosje.gov.in/schemes-and-services/integrated-programme-for-senior-citizens-ipsrc/",
+    "category": "Welfare Schemes",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (1915626 bytes)",
+    "extraction_status": "verified_ok (9 sections, 192560 chars)"
+  },
+  {
+    "doc_id": "dosje_rvy",
+    "title": "Rashtriya Vayoshri Yojana (RVY) (DoSJE)",
+    "source_url": "https://www.dosje.gov.in/schemes-and-services/rashtriya-vayoshri-yojana-rvy/",
+    "category": "Assistive Devices",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (297483 bytes)",
+    "extraction_status": "verified_ok (34 sections, 39368 chars)"
+  },
+  {
+    "doc_id": "nisd_senior_citizens",
+    "title": "National Institute of Social Defence (NISD) - Old Age Care & Geriatric Training",
+    "source_url": "https://www.nisd.gov.in/",
+    "category": "Institutional Care & Training",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "intermittent_timeout",
+    "extraction_status": "unverified_in_checkpoint_2_5"
+  },
+  {
+    "doc_id": "pib_avyay_umbrella",
+    "title": "Atal Vayo Abhyuday Yojana (AVYAY) Key Components & Guidelines (PIB)",
+    "source_url": "https://www.pib.gov.in/PressNoteDetails.aspx?NoteId=160574&ModuleId=3&reg=3&lang=1",
+    "category": "Welfare Schemes",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (232080 bytes)",
+    "extraction_status": "verified_ok (2 sections, 17564 chars)"
+  },
+  {
+    "doc_id": "pib_ipsrc_grants",
+    "title": "Integrated Programme for Senior Citizens (IPSrC) Grants & Homes (PIB)",
+    "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1844991&reg=48&lang=2",
+    "category": "Welfare Schemes",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (138953 bytes)",
+    "extraction_status": "verified_ok (1 section, 12045 chars)"
+  },
+  {
+    "doc_id": "pib_ignoaps_rvy",
+    "title": "IGNOAPS and Rashtriya Vayoshri Yojana Implementation Overview (PIB)",
+    "source_url": "https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2226202&reg=23&lang=1",
+    "category": "Pension & Social Security",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (1566125 bytes)",
+    "extraction_status": "verified_ok (1 section, 18871 chars)"
+  },
+  {
+    "doc_id": "pib_nalsa_mwpsc",
+    "title": "NALSA Legal Services to Senior Citizens & MWPSC Act Implementation (PIB)",
+    "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2039569&reg=3&lang=2",
+    "category": "Legal & Rights",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (97263 bytes)",
+    "extraction_status": "verified_ok (1 section, 8065 chars)"
+  },
+  {
+    "doc_id": "pib_sage_portal",
+    "title": "SAGE (Seniorcare Ageing Growth Engine) Initiative & Portal (PIB)",
+    "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1724414",
+    "category": "Welfare Schemes",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (121311 bytes)",
+    "extraction_status": "verified_ok (1 section, 9183 chars)"
+  },
+  {
+    "doc_id": "pib_nphce",
+    "title": "National Programme for Health Care of the Elderly (NPHCE) Implementation & Geriatric Centres (PIB)",
+    "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2183196",
+    "category": "Healthcare",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok",
+    "extraction_status": "verified_ok (1 section, 45739 chars)"
+  },
+  {
+    "doc_id": "ab_pmjay_70plus_pib",
+    "title": "Ayushman Bharat PM-JAY Health Coverage Expansion for Senior Citizens Aged 70+ (PIB)",
+    "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2053953",
+    "category": "Healthcare",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (135524 bytes)",
+    "extraction_status": "verified_ok (1 section, 5175 chars)"
+  },
+  {
+    "doc_id": "jeevan_pramaan",
+    "title": "Jeevan Pramaan - Digital Life Certificate for Pensioners",
+    "source_url": "https://jeevanpramaan.gov.in/",
+    "category": "Pension & Social Security",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "intermittent_timeout",
+    "extraction_status": "unverified_in_checkpoint_2_5"
+  },
+  {
+    "doc_id": "pib_jeevan_pramaan_dlc",
+    "title": "Nationwide Digital Life Certificate (Jeevan Pramaan) Campaign (PIB)",
+    "source_url": "https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2334451&reg=22&lang=1",
+    "category": "Pension & Social Security",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (255306 bytes)",
+    "extraction_status": "verified_ok (33 sections, 8064 chars)"
+  },
+  {
+    "doc_id": "scss_pib",
+    "title": "Senior Citizens Savings Scheme (SCSS) Deposit Limit & Updates (PIB)",
+    "source_url": "https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2078393&reg=3&lang=1",
+    "category": "Financial & Savings",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (264273 bytes)",
+    "extraction_status": "verified_ok (29 sections, 7331 chars)"
+  },
+  {
+    "doc_id": "rbi_doorstep_banking",
+    "title": "RBI Guidelines on Doorstep Banking Facilities for Senior Citizens",
+    "source_url": "https://www.rbi.org.in/commonperson/English/Scripts/Notification.aspx?Id=2613",
+    "category": "Financial & Banking",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (94671 bytes)",
+    "extraction_status": "verified_ok (1 section, 21796 chars)"
+  },
+  {
+    "doc_id": "rbi_senior_facilities",
+    "title": "RBI Banking Facilities for Senior Citizens and Differently Abled Persons",
+    "source_url": "https://www.rbi.org.in/Commonperson/english/scripts/Notification.aspx?Id=2647",
+    "category": "Financial & Banking",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (70453 bytes)",
+    "extraction_status": "verified_ok (1 section, 7103 chars)"
+  },
+  {
+    "doc_id": "incometax_senior_citizens",
+    "title": "Income Tax Return & Provisions for Senior and Super Senior Citizens (Income Tax Portal)",
+    "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+    "category": "Taxation",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (215621 bytes)",
+    "extraction_status": "verified_ok (5 sections, 24602 chars)"
+  },
+  {
+    "doc_id": "epfo_eps95",
+    "title": "Employees' Pension Scheme (EPS-95) (EPFO)",
+    "source_url": "https://pmvbry.epfindia.gov.in/pension-scheme-eps/",
+    "category": "Pension & Social Security",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok (225790 bytes)",
+    "extraction_status": "verified_ok (6 sections, 3190 chars)"
+  },
+  {
+    "doc_id": "pib_apy_overview",
+    "title": "Atal Pension Yojana (APY) Eligibility and Income Tax Rules (PIB)",
+    "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2254487&reg=3&lang=1",
+    "category": "Pension & Social Security",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok",
+    "extraction_status": "verified_ok (1 section, 4005 chars)"
+  },
+  {
+    "doc_id": "pib_apy_enrollments",
+    "title": "Atal Pension Yojana (APY) Guaranteed Pension & Coverage (PIB)",
+    "source_url": "https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2259251",
+    "category": "Pension & Social Security",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok",
+    "extraction_status": "verified_ok (1 section, 19325 chars)"
+  },
+  {
+    "doc_id": "pib_vayoshreshtha_samman",
+    "title": "Vayoshreshtha Samman National Awards for Senior Citizens (PIB PDF)",
+    "source_url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2022/aug/doc20228582001.pdf",
+    "category": "Welfare Schemes",
+    "geographic_scope": "National",
+    "format": "pdf",
+    "fetch_status": "verified_ok",
+    "extraction_status": "verified_ok (1 section, 13966 chars)"
+  },
+  {
+    "doc_id": "pib_mwpsc_act_implementation",
+    "title": "Implementation of MWPSC Act 2007 and State Action Plans for Senior Citizens (PIB)",
+    "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1781358",
+    "category": "Legal & Rights",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok",
+    "extraction_status": "verified_ok (1 section, 52083 chars)"
+  },
+  {
+    "doc_id": "pib_senior_welfare_2",
+    "title": "Atal Vayo Abhyuday Yojana & Elderline Support Overview (PIB)",
+    "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2299181",
+    "category": "Welfare Schemes",
+    "geographic_scope": "National",
+    "format": "html",
+    "fetch_status": "verified_ok",
+    "extraction_status": "verified_ok (1 section, 10877 chars)"
+  }
+]
