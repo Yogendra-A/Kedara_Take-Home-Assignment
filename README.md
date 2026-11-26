@@ -20,6 +20,7 @@ Senior citizens and caregivers in India often have to navigate fragmented govern
 - **`src/chunker.py`**: Deterministic `tiktoken` (`cl100k_base`) token-bounded chunking with overlap and unique chunk IDs (`{doc_id}__c{size}__{idx:04d}`).
 - **`src/retriever.py` & `src/index_builder.py`**: L2-normalized `sentence-transformers` embeddings (`384`-D) indexed in FAISS (`IndexFlatL2`) with cosine similarity scoring and dual-index building (`chunks_256` and `chunks_512`).
 - **`src/generator.py` & `src/ask.py`**: Grounded answering with `[S1]`..`[Sn]` handle resolution, single constrained retry on citation formatting errors, strict refusal handling, failure categorization, and CLI entrypoint.
+- **`app.py`**: Minimal Streamlit "Care Resource Explorer" UI reusing the cached `SentenceTransformerEmbedder`, FAISS `VectorStore`, and `generate_grounded_answer()` modules.
 - **`eval/`**: Schema-validated evaluation runner (`eval/run_eval.py`), Recall@5 / MRR@5 / refusal / failure-breakdown / human-reviewed citation metrics (`eval/metrics.py`), controlled `256` vs `512` comparison (`eval/compare.py`), and authoring guide (`eval/AUTHORING_GUIDE.md`).
 
 ---
@@ -78,9 +79,32 @@ copy .env.example .env   # then add GROQ_API_KEY or GEMINI_API_KEY
 # Build both indexes (256 and 512 tokens) from data/processed/sections.jsonl
 python -m src.index_builder
 
-# Ask a question
+# Ask a question via CLI (256-token index by default)
 python -m src.ask "What is the Elderline helpline number for senior citizens?"
+
+# Launch the Care Resource Explorer Streamlit UI
+python -m streamlit run app.py
 ```
+
+### Care Resource Explorer (Streamlit UI)
+
+`app.py` provides a desktop-first information retrieval interface ("Care Resource Explorer") built with Streamlit:
+- **Index & Model Caching**: `load_embedder` and `load_vector_store` use `@st.cache_resource` keyed by embedding model name and chunk size (`256` or `512` tokens). User questions and answers are never cached across queries.
+- **Grounded Evidence View**: Displays the dynamically computed corpus document/chunk count, structured answer panel (with exact `"I don't know from these sources"` refusal state), resolved `[S1]`..`[Sn]` citations with clickable official source URLs, and expandable retrieved passage excerpts.
+- **Latency Measurement**: Measures FAISS retrieval (`retrieval_ms`) and LLM generation (`generation_ms`) separately using `time.perf_counter()`, reporting `Retrieval`, `Generation`, and `Total` durations with explicit `ms` / `s` units.
+
+![Care Resource Explorer UI](docs/ui_screenshot.png)
+
+**Optional Docker Launch (with port mapping):**
+
+```powershell
+docker run --rm -p 8501:8501 --env-file .env -e HF_HUB_OFFLINE=1 `
+  -v "${env:USERPROFILE}\.cache\huggingface:/root/.cache/huggingface:ro" `
+  -v "${env:LOCALAPPDATA}\Temp\data-gym-cache:/tmp/data-gym-cache:ro" `
+  -v "${PWD}:/app" kedara-rag:py311 `
+  python -m streamlit run app.py --server.headless true --server.port 8501 --server.address 0.0.0.0
+```
+Then open `http://localhost:8501` in your browser.
 
 ### Regenerating the Corpus Snapshot (Optional)
 
