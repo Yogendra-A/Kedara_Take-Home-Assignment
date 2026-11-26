@@ -15,6 +15,17 @@ Senior citizens and caregivers in India often have to navigate fragmented govern
 
 ## Architecture
 
+```mermaid
+flowchart LR
+    M["data/manifest.json (25 URLs)"] --> I["src/corpus.py & src/ingest.py"]
+    I -->|"21 clean docs, 96 sections"| S["data/processed/sections.jsonl"]
+    S --> C["src/chunker.py (256 & 512 tokens)"]
+    C --> R["src/index_builder.py & src/retriever.py (all-MiniLM-L6-v2 + FAISS)"]
+    R -->|"chunks_256 (508) / chunks_512 (280)"| Q["src/ask.py & app.py"]
+    Q --> G["src/generator.py (Groq / Gemini + S1..Sn citations)"]
+    Q --> E["eval/compare.py (256 vs 512 evaluation)"]
+```
+
 - **`config/settings.py`**: Central paths, retrieval defaults (`all-MiniLM-L6-v2`, `256` / `512`-token chunks, `32`-token overlap, `top_k=5`, `cl100k_base` tokenizer), and LLM provider configuration (`groq` or `gemini`, `temperature=0.0`).
 - **`src/ingest.py` & `src/corpus.py`**: Manifest validation (`data/manifest.json`), HTTP fetching with retries/exponential backoff, HTML (`BeautifulSoup` + `lxml`) and PDF (`pypdf`) section extraction, boilerplate stripping, section deduplication, and snapshot persistence (`data/processed/sections.jsonl` & `data/processed/ingestion_report.json`).
 - **`src/chunker.py`**: Deterministic `tiktoken` (`cl100k_base`) token-bounded chunking with overlap and unique chunk IDs (`{doc_id}__c{size}__{idx:04d}`).

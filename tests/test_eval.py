@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from config.settings import REFUSAL_TEXT
+from eval.compare import format_comparison_markdown, select_worst_examples
 from eval.metrics import (
     citation_correctness,
     false_refusal_rate,
@@ -247,3 +248,18 @@ def test_evaluate_index_separates_failures_and_preserves_none_human_labels(tmp_p
     assert summary["false_refusal_rate"] == pytest.approx(0.0)
     assert summary["citation_correctness_human_reviewed"] is None
     assert all(o["human_citation_correct"] is None for o in report["outcomes"])
+
+    worst = select_worst_examples(report["outcomes"], limit=2)
+    assert len(worst) == 2
+    assert worst[0]["error_type"] == "provider_error"
+
+    md = format_comparison_markdown(
+        {
+            "settings": {"embedding_model": "all-MiniLM-L6-v2", "top_k": 5, "min_score": 0.2},
+            "summary_256": summary,
+            "summary_512": summary,
+            "results_256": report,
+        }
+    )
+    assert "256 vs 512 Comparison Table" in md
+    assert "Five Worst-Answer Examples" in md
