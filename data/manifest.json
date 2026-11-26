@@ -107,7 +107,8 @@
     "geographic_scope": "National",
     "format": "html",
     "fetch_status": "verified_ok (121311 bytes)",
-    "extraction_status": "verified_ok (1 section, 9183 chars)"
+    "extraction_status": "excluded (unrelated Green Railways press release)",
+    "exclude_reason": "PRID=1724414 returned unrelated Indian Railways Green Railways content rather than senior-citizen care."
   },
   {
     "doc_id": "pib_nphce",
@@ -147,7 +148,8 @@
     "geographic_scope": "National",
     "format": "html",
     "fetch_status": "verified_ok (255306 bytes)",
-    "extraction_status": "verified_ok (33 sections, 8064 chars)"
+    "extraction_status": "excluded (navigation-only content)",
+    "exclude_reason": "Static HTML extraction yielded only 300 chars of PIB navigation/menu boilerplate."
   },
   {
     "doc_id": "scss_pib",
@@ -157,7 +159,8 @@
     "geographic_scope": "National",
     "format": "html",
     "fetch_status": "verified_ok (264273 bytes)",
-    "extraction_status": "verified_ok (29 sections, 7331 chars)"
+    "extraction_status": "excluded (navigation-only content)",
+    "exclude_reason": "Static HTML extraction yielded only 349 chars of PIB navigation/menu boilerplate."
   },
   {
     "doc_id": "rbi_doorstep_banking",

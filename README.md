@@ -129,7 +129,7 @@ python -m eval.compare --questions eval/questions.json
 
 ## Corpus Manifest (All 25 URLs)
 
-`data/manifest.json` defines 25 official Indian government URLs. During ingestion (`data/processed/ingestion_report.json`), **25/25** URLs were fetched, **24/25** extracted successfully (`106` deduplicated sections), and **1/25** failed extraction (`pib_vayoshreshtha_samman`).
+`data/manifest.json` defines 25 official Indian government URLs. During ingestion (`data/processed/ingestion_report.json`), **21/25** documents are indexed (`96` deduplicated sections), **3/25** are explicitly excluded due to irrelevant or navigation-only content (`pib_sage_portal`, `pib_jeevan_pramaan_dlc`, `scss_pib`), and **1/25** failed extraction (`pib_vayoshreshtha_samman`).
 
 | `doc_id` | Title | Category | Format | Extraction Status | Source URL |
 | --- | --- | --- | --- | --- | --- |
@@ -143,12 +143,12 @@ python -m eval.compare --questions eval/questions.json
 | `pib_ipsrc_grants` | Integrated Programme for Senior Citizens (IPSrC) Grants & Homes (PIB) | Welfare Schemes | html | OK (1 sec, 6,022 chars) | https://www.pib.gov.in/PressReleasePage.aspx?PRID=1844991&reg=48&lang=2 |
 | `pib_ignoaps_rvy` | IGNOAPS and Rashtriya Vayoshri Yojana Implementation Overview (PIB) | Pension & Social Security | html | OK (1 sec, 7,186 chars) | https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2226202&reg=23&lang=1 |
 | `pib_nalsa_mwpsc` | NALSA Legal Services to Senior Citizens & MWPSC Act Implementation (PIB) | Legal & Rights | html | OK (1 sec, 4,032 chars) | https://www.pib.gov.in/PressReleasePage.aspx?PRID=2039569&reg=3&lang=2 |
-| `pib_sage_portal` | SAGE (Seniorcare Ageing Growth Engine) Initiative & Portal (PIB) | Welfare Schemes | html | OK (1 sec, 4,591 chars) | https://www.pib.gov.in/PressReleasePage.aspx?PRID=1724414 |
+| `pib_sage_portal` | SAGE (Seniorcare Ageing Growth Engine) Initiative & Portal (PIB) | Welfare Schemes | html | **EXCLUDED** (unrelated Green Railways press release) | https://www.pib.gov.in/PressReleasePage.aspx?PRID=1724414 |
 | `pib_nphce` | National Programme for Health Care of the Elderly (NPHCE) Implementation & Geriatric Centres (PIB) | Healthcare | html | OK (1 sec, 22,869 chars) | https://www.pib.gov.in/PressReleasePage.aspx?PRID=2183196 |
 | `ab_pmjay_70plus_pib` | Ayushman Bharat PM-JAY Health Coverage Expansion for Senior Citizens Aged 70+ (PIB) | Healthcare | html | OK (1 sec, 4,135 chars) | https://www.pib.gov.in/PressReleasePage.aspx?PRID=2330009&reg=6&lang=1 |
 | `jeevan_pramaan` | Jeevan Pramaan - Digital Life Certificate for Pensioners | Pension & Social Security | html | OK (13 secs, 4,573 chars) | https://jeevanpramaan.gov.in/ |
-| `pib_jeevan_pramaan_dlc` | Nationwide Digital Life Certificate (Jeevan Pramaan) Campaign (PIB) | Pension & Social Security | html | OK (4 secs, 300 chars) | https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2334451&reg=22&lang=1 |
-| `scss_pib` | Senior Citizens Savings Scheme (SCSS) Deposit Limit & Updates (PIB) | Financial & Savings | html | OK (5 secs, 349 chars) | https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2078393&reg=3&lang=1 |
+| `pib_jeevan_pramaan_dlc` | Nationwide Digital Life Certificate (Jeevan Pramaan) Campaign (PIB) | Pension & Social Security | html | **EXCLUDED** (navigation-only, 300 chars) | https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2334451&reg=22&lang=1 |
+| `scss_pib` | Senior Citizens Savings Scheme (SCSS) Deposit Limit & Updates (PIB) | Financial & Savings | html | **EXCLUDED** (navigation-only, 349 chars) | https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2078393&reg=3&lang=1 |
 | `rbi_doorstep_banking` | RBI Guidelines on Doorstep Banking Facilities for Senior Citizens | Financial & Banking | html | OK (1 sec, 20,916 chars) | https://www.rbi.org.in/commonperson/English/Scripts/Notification.aspx?Id=2613 |
 | `rbi_senior_facilities` | RBI Banking Facilities for Senior Citizens and Differently Abled Persons | Financial & Banking | html | OK (1 sec, 7,103 chars) | https://www.rbi.org.in/Commonperson/english/scripts/Notification.aspx?Id=2647 |
 | `incometax_senior_citizens` | Income Tax Return & Provisions for Senior and Super Senior Citizens (Income Tax Portal) | Taxation | html | OK (5 secs, 20,526 chars) | https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1 |
@@ -161,21 +161,21 @@ python -m eval.compare --questions eval/questions.json
 
 ---
 
-## Actual 24-Document Corpus Description
+## Actual 21-Document Indexed Corpus Description
 
-- **Snapshot**: `data/processed/sections.jsonl` contains **106** deduplicated `DocumentSection` records across **24** unique documents (`391 KB`).
-- **Domain coverage**: Legal & Rights (MWPSC Act, NALSA), Helplines (Elderline 14567), Welfare Schemes (AVYAY, IPSrC, RVY, SAGE, NISD), Healthcare (NPHCE, Ayushman Bharat PM-JAY 70+), Pensions & Social Security (IGNOAPS, Jeevan Pramaan, EPS-95, APY), Financial & Banking (SCSS, RBI doorstep banking & senior facilities), and Taxation (Income Tax provisions).
+- **Snapshot**: `data/processed/sections.jsonl` contains **96** deduplicated `DocumentSection` records across **21** unique documents.
+- **Domain coverage**: Legal & Rights (MWPSC Act, NALSA), Helplines (Elderline 14567), Welfare Schemes (AVYAY, IPSrC, RVY, NISD), Healthcare (NPHCE, Ayushman Bharat PM-JAY 70+), Pensions & Social Security (IGNOAPS, Jeevan Pramaan, EPS-95, APY), Financial & Banking (RBI doorstep banking & senior facilities), and Taxation (Income Tax provisions).
 - **Index sizes**:
-  - `chunks_256`: **521** chunks (`384`-D `IndexFlatL2`)
-  - `chunks_512`: **291** chunks (`384`-D `IndexFlatL2`)
+  - `chunks_256`: **508** chunks (`384`-D `IndexFlatL2`)
+  - `chunks_512`: **280** chunks (`384`-D `IndexFlatL2`)
 
 ---
 
 ## 256 vs 512 Chunking Rationale
 
 Both indexes use `tiktoken` (`cl100k_base`) with a `32`-token overlap and identical metadata prefixing (`"{title} | {section}\n{text}"` during embedding):
-- **256-token chunks (`521` vectors)**: Higher retrieval granularity and less topic dilution per vector, which helps pinpoint specific facts (helpline numbers, age thresholds, deposit limits) in long multi-topic pages such as `dosje_ipsrc` (`155,207` chars).
-- **512-token chunks (`291` vectors)**: Preserves broader surrounding context (eligibility conditions + exceptions together) within a single retrieved chunk, reducing boundary fragmentation at the cost of coarser similarity matching.
+- **256-token chunks (`508` vectors)**: Higher retrieval granularity and less topic dilution per vector, which helps pinpoint specific facts (helpline numbers, age thresholds, deposit limits) in long multi-topic pages such as `dosje_ipsrc` (`155,207` chars).
+- **512-token chunks (`280` vectors)**: Preserves broader surrounding context (eligibility conditions + exceptions together) within a single retrieved chunk, reducing boundary fragmentation at the cost of coarser similarity matching.
 - Comparing both under identical `top_k=5`, `min_score=0.2`, embedding model, and LLM settings quantifies the precision-vs-context trade-off on this corpus.
 
 ---

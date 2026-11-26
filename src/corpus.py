@@ -23,6 +23,7 @@ class ManifestEntry:
     format: str
     fetch_status: str = ""
     extraction_status: str = ""
+    exclude_reason: str = ""
 
 
 @dataclass(frozen=True)
@@ -78,6 +79,7 @@ def load_and_validate_manifest(manifest_path: Path = MANIFEST_PATH) -> List[Mani
                 format=fmt,
                 fetch_status=str(item.get("fetch_status", "")),
                 extraction_status=str(item.get("extraction_status", "")),
+                exclude_reason=str(item.get("exclude_reason", "")).strip(),
             )
         )
 
@@ -104,6 +106,19 @@ def _ingest_one(
     timeout: int,
     skip_existing_raw: bool,
 ) -> Tuple[List[DocumentSection], IngestionRecord]:
+    if entry.exclude_reason:
+        return [], IngestionRecord(
+            doc_id=entry.doc_id,
+            title=entry.title,
+            source_url=entry.source_url,
+            format=entry.format,
+            fetch_ok=False,
+            extraction_ok=False,
+            section_count=0,
+            char_count=0,
+            error=f"excluded: {entry.exclude_reason}",
+        )
+
     dest_path = raw_dir / f"{entry.doc_id}.{entry.format}"
     fetch_ok = False
     extraction_ok = False

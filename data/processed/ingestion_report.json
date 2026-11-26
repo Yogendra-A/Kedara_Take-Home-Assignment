@@ -1,8 +1,41 @@
 {
   "total_manifest_docs": 25,
-  "fetched_ok": 25,
-  "extracted_ok": 24,
+  "fetched_ok": 22,
+  "extracted_ok": 21,
   "failed_docs": [
+    {
+      "doc_id": "pib_sage_portal",
+      "title": "SAGE (Seniorcare Ageing Growth Engine) Initiative & Portal (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1724414",
+      "format": "html",
+      "fetch_ok": false,
+      "extraction_ok": false,
+      "section_count": 0,
+      "char_count": 0,
+      "error": "excluded: PRID=1724414 returned unrelated Indian Railways Green Railways content rather than senior-citizen care."
+    },
+    {
+      "doc_id": "pib_jeevan_pramaan_dlc",
+      "title": "Nationwide Digital Life Certificate (Jeevan Pramaan) Campaign (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2334451&reg=22&lang=1",
+      "format": "html",
+      "fetch_ok": false,
+      "extraction_ok": false,
+      "section_count": 0,
+      "char_count": 0,
+      "error": "excluded: Static HTML extraction yielded only 300 chars of PIB navigation/menu boilerplate."
+    },
+    {
+      "doc_id": "scss_pib",
+      "title": "Senior Citizens Savings Scheme (SCSS) Deposit Limit & Updates (PIB)",
+      "source_url": "https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2078393&reg=3&lang=1",
+      "format": "html",
+      "fetch_ok": false,
+      "extraction_ok": false,
+      "section_count": 0,
+      "char_count": 0,
+      "error": "excluded: Static HTML extraction yielded only 349 chars of PIB navigation/menu boilerplate."
+    },
     {
       "doc_id": "pib_vayoshreshtha_samman",
       "title": "Vayoshreshtha Samman National Awards for Senior Citizens (PIB PDF)",
@@ -131,11 +164,11 @@
       "title": "SAGE (Seniorcare Ageing Growth Engine) Initiative & Portal (PIB)",
       "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1724414",
       "format": "html",
-      "fetch_ok": true,
-      "extraction_ok": true,
-      "section_count": 1,
-      "char_count": 4591,
-      "error": ""
+      "fetch_ok": false,
+      "extraction_ok": false,
+      "section_count": 0,
+      "char_count": 0,
+      "error": "excluded: PRID=1724414 returned unrelated Indian Railways Green Railways content rather than senior-citizen care."
     },
     {
       "doc_id": "pib_nphce",
@@ -175,22 +208,22 @@
       "title": "Nationwide Digital Life Certificate (Jeevan Pramaan) Campaign (PIB)",
       "source_url": "https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2334451&reg=22&lang=1",
       "format": "html",
-      "fetch_ok": true,
-      "extraction_ok": true,
-      "section_count": 4,
-      "char_count": 300,
-      "error": ""
+      "fetch_ok": false,
+      "extraction_ok": false,
+      "section_count": 0,
+      "char_count": 0,
+      "error": "excluded: Static HTML extraction yielded only 300 chars of PIB navigation/menu boilerplate."
     },
     {
       "doc_id": "scss_pib",
       "title": "Senior Citizens Savings Scheme (SCSS) Deposit Limit & Updates (PIB)",
       "source_url": "https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2078393&reg=3&lang=1",
       "format": "html",
-      "fetch_ok": true,
-      "extraction_ok": true,
-      "section_count": 5,
-      "char_count": 349,
-      "error": ""
+      "fetch_ok": false,
+      "extraction_ok": false,
+      "section_count": 0,
+      "char_count": 0,
+      "error": "excluded: Static HTML extraction yielded only 349 chars of PIB navigation/menu boilerplate."
     },
     {
       "doc_id": "rbi_doorstep_banking",

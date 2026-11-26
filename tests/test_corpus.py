@@ -104,3 +104,40 @@ def test_ingest_corpus_records_failures_without_omitting(tmp_path: Path, monkeyp
     assert records[1].fetch_ok is False
     assert "Simulated network failure" in records[1].error
     assert len(sections) == 1
+
+
+def test_ingest_corpus_excludes_flagged_entries(tmp_path: Path, monkeypatch):
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(
+        json.dumps([
+            {"doc_id": "ok_doc", "title": "OK", "source_url": "https://gov.in/ok", "format": "html"},
+            {
+                "doc_id": "excluded_doc",
+                "title": "Excluded",
+                "source_url": "https://gov.in/excl",
+                "format": "html",
+                "exclude_reason": "navigation-only boilerplate",
+            },
+        ]),
+        encoding="utf-8",
+    )
+
+    def fake_fetch(url: str, dest: Path, timeout: int = 25) -> Path:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(
+            "<html><body><main><h1>Pension</h1><p>" + ("Senior citizen pension details. " * 10) + "</p></main></body></html>",
+            encoding="utf-8",
+        )
+        return dest
+
+    monkeypatch.setattr("src.corpus.fetch_url", fake_fetch)
+    sections, records = ingest_corpus(
+        manifest_path=manifest,
+        raw_dir=tmp_path / "raw",
+        processed_dir=tmp_path / "processed",
+        skip_existing_raw=False,
+    )
+    assert {s.doc_id for s in sections} == {"ok_doc"}
+    excl = [r for r in records if r.doc_id == "excluded_doc"][0]
+    assert not excl.extraction_ok
+    assert "excluded: navigation-only boilerplate" in excl.error
