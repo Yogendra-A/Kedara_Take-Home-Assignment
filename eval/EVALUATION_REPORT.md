@@ -37,3 +37,14 @@
 3. _Pending evaluation run and manual review._
 4. _Pending evaluation run and manual review._
 5. _Pending evaluation run and manual review._
+
+## Pre-Fix Grounding Defect & Error Analysis (Manual Testing)
+
+- **Question**: `"What is the current annual interest rate and maximum deposit limit for the Senior Citizens Savings Scheme (SCSS) in India?"`
+- **Original Failed Output (Preserved)**:
+  > `"The Senior Citizens Savings Scheme (SCSS) currently offers an assured rate of return of up to 7.75% per annum, and the maximum deposit limit is ₹15 lakh per senior citizen."`
+- **Original Citation**: `[S1]` (`pib_mwpsc_act_implementation__c256__0019`, `doc_id=pib_mwpsc_act_implementation`, `section=PROBLEMS OF AGED PEOPLE`, `similarity=0.6027`).
+- **Root Cause**:
+  - **Retrieval**: `scss_pib` was excluded (navigation-only), so no SCSS document exists in the corpus. Dense retrieval returned `pib_mwpsc_act_implementation__c256__0019` because it mentions SCSS in passing while describing a *different* scheme (LIC's PMVVY: 7.40% for 2020–21, annual reset in line with SCSS up to a 7.75% ceiling, ₹15 lakh maximum purchase price).
+  - **Generation**: Without explicit entity-scope and temporal-validity rules in `SYSTEM_PROMPT`, the LLM transferred PMVVY's 2020–23 ceiling (7.75%) and purchase limit (₹15 lakh) onto SCSS and presented them as current facts.
+- **Fix & Verification**: Tightened `SYSTEM_PROMPT` in `src/generator.py` with entity/scope-match and temporal/completeness refusal rules (no hardcoded scheme rules, no `min_score` threshold increase). Re-running the SCSS query returned `"I don't know from these sources"` (`Refused: True`), while Elderline (`14567`) and AB PM-JAY (`₹5 lakh per family per year`) continued to answer with valid citations.

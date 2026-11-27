@@ -8,6 +8,7 @@ import pytest
 from config.settings import LLMConfig, REFUSAL_TEXT
 from src.chunker import Chunk
 from src.generator import (
+    SYSTEM_PROMPT,
     GeneratorError,
     build_handle_map,
     build_llm_client,
@@ -158,3 +159,49 @@ def test_resolve_handle_citations_helper():
     assert chunk_ids == ["elderline_14567__c256__0000", "rbi_senior__c256__0001"]
     assert len(prov) == 2
     assert valid is True
+
+
+def test_grounding_prompt_guards_entity_and_temporal_scope_and_flags_false_citations():
+    assert "exact entity and scope match" in SYSTEM_PROMPT.lower()
+    assert "dated/historical" in SYSTEM_PROMPT.lower()
+
+    # Simulate a near-miss passage that mentions another scheme's numbers (e.g. 7.75%, 15 lakh)
+    near_miss = [
+        FakeRetrievedChunk(
+            chunk=Chunk(
+                chunk_id="other_scheme__c256__0000",
+                doc_id="other_scheme",
+                title="Other Pension Scheme",
+                source_url="https://pib.gov.in/other",
+                section="Overview",
+                token_count=30,
+                text="For 2020-21, Scheme A offered 7.40% reset up to 7.75% ceiling and max purchase price Rs. 15 lakh.",
+            ),
+            score=0.60,
+        )
+    ]
+
+    # Grounded model refuses rather than transferring Scheme A numbers to Scheme B
+    refusal_res = generate_grounded_answer(
+        "What is the current interest rate and deposit limit of Scheme B?",
+        near_miss,
+        client=FakeLLMClient(REFUSAL_TEXT),
+        min_top_score=0.2,
+    )
+    assert refusal_res.refused is True
+    assert refusal_res.answer == REFUSAL_TEXT
+    assert refusal_res.error_type == "evidence_insufficient"
+
+    # Unsupported numeric claim with a fabricated citation handle [S9] is flagged invalid
+    false_cite_res = generate_grounded_answer(
+        "What is the current interest rate and deposit limit of Scheme B?",
+        near_miss,
+        client=FakeLLMClient([
+            "Scheme B offers 7.75% and Rs. 15 lakh [S9].",
+            "Scheme B offers 7.75% and Rs. 15 lakh [S9].",
+        ]),
+        min_top_score=0.2,
+    )
+    assert false_cite_res.refused is False
+    assert false_cite_res.citation_valid is False
+    assert false_cite_res.error_type == "malformed_citations"
