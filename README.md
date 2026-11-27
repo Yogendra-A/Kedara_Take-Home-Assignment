@@ -202,23 +202,41 @@ Both indexes use `tiktoken` (`cl100k_base`) with a `32`-token overlap and identi
 
 ## Evaluation Methodology
 
-- **Question Set**: 25 manually authored questions (`eval/questions.json`, currently `[]` awaiting authoring per `eval/AUTHORING_GUIDE.md`), split between corpus-answerable questions and genuinely out-of-corpus unanswerable questions.
+- **Question Set**: 25-question evaluation set (`eval/questions.json`: `20` answerable across direct factual, multi-condition, and informal/stressed-family categories + `5` genuinely unanswerable out-of-corpus questions).
 - **Retrieval Metrics (Answerable Only)**:
   - `Recall@5`: Fraction of answerable questions where at least one manually assigned `expected_source_doc_id` appears in the top-5 retrieved chunks.
   - `MRR@5`: Mean reciprocal rank of the first relevant `expected_source_doc_id` in the top-5 results.
 - **Refusal Metrics**:
   - `Refusal Recall`: Fraction of unanswerable questions refused.
   - `False-Refusal Rate`: Fraction of answerable questions incorrectly refused.
-- **Citation & Failure Metrics**:
-  - `citation_valid_rate`, `missing_citations_count`, `malformed_citations_count`, `provider_error_count`, `initial_failure_recovered_count`.
-  - `citation_correctness_human_reviewed`: Computed strictly from manual `human_citation_correct` labels (`null` until human review; never automated or fabricated).
-- **Controlled Comparison**: `eval/compare.py` runs `chunks_256` and `chunks_512` sequentially against the exact same question set, embedder, `top_k`, `min_score`, and LLM configuration, persisting per-question evidence and outputs for manual inspection.
+- **Syntactic Citation Validity vs. Human Citation Correctness**:
+  - `citation_valid_rate` checks only **syntactic validity** (whether `[S1]`..`[Sn]` handles exist in the retrieved context), while `citation_correctness_human_reviewed` measures **factual citation support** via manual human review (`human_citation_correct`). `missing_citations_count`, `malformed_citations_count`, and `provider_error_count` are tracked separately.
+- **Controlled Comparison**: `eval/compare.py` runs `chunks_256` and `chunks_512` sequentially against the exact same question set, embedder (`all-MiniLM-L6-v2`), `top_k=5`, `min_score=0.2`, and LLM configuration (`groq` / `openai/gpt-oss-20b`, `temperature=0.0`), persisting per-question evidence and outputs in `eval/comparison_256_vs_512.json`, [`eval/EVALUATION_REPORT.md`](eval/EVALUATION_REPORT.md), and [`eval/HUMAN_REVIEW_WORKSHEET.md`](eval/HUMAN_REVIEW_WORKSHEET.md).
 
 ---
 
-## Results (Pending Final Evaluation)
+## Results (256 vs 512 Controlled Comparison)
 
-*Pending*: `eval/questions.json` is intentionally empty until the 25 manually authored questions and human citation reviews are completed. No evaluation metrics are reported here yet.
+| Metric | 256-token Index (`508` vectors) | 512-token Index (`280` vectors) |
+| --- | --- | --- |
+| Recall@5 (Answerable, `n=20`) | `0.9500` (`19/20`) | `0.9500` (`19/20`) |
+| MRR@5 (Answerable, `n=20`) | `0.8142` | `0.8625` |
+| Refusal Recall (Unanswerable, `n=5`) | `1.0000` (`5/5`) | `0.8000` (`4/5`) |
+| False-Refusal Rate (Answerable, `n=20`) | `0.0500` (`1/20`) | `0.0500` (`1/20`) |
+| Citation Valid Rate (Syntactic) | `0.8947` (`17/19`) | `0.9500` (`19/20`) |
+| Missing Citations / Malformed / Provider Errors | `2` / `0` / `0` | `1` / `0` / `0` |
+| Human-Reviewed Citation Correctness | **Pending** (`null` — awaiting manual review) | **Pending** (`null` — awaiting manual review) |
+
+*Note on Latency*: Batch evaluation JSON files do not record per-question timing; interactive latency is measured in `app.py` via `time.perf_counter()` (observed in live Streamlit verification: `55.8 ms`–`1.46 s` retrieval, `936.3 ms`–`1.15 s` generation).
+
+### 256 vs 512 Trade-Off & Evidence-Based Observations
+
+1. **Higher Ranking Precision at 512 vs. Stronger Refusal Discipline at 256**: Both chunk sizes achieved `0.95` Recall@5 (`19/20`, missing only `Q20` where `dosje_avyay` was outranked by PIB summaries), while 512-token chunks improved `MRR@5` (`0.8625` vs `0.8142`) and syntactic `citation_valid_rate` (`0.9500` vs `0.8947`). However, 256-token achieved `1.00` Refusal Recall (`5/5`), whereas 512-token missed `Q21` (`0.80` Refusal Recall) by conflating PMVVY's 2020–23 ceiling (`7.75%` / `₹15 lakh`) with SCSS.
+2. **Syntactic Citation Validity ≠ Factual Grounding**: On `Q21` (512-token), the model emitted a syntactically valid `[S1]` handle (`citation_valid=True`) for an unsupported entity-conflation claim. This confirms why `human_citation_correct` must be manually reviewed rather than inferred from handle parsing.
+3. **LLM Empty Completions & Strict Bracket Formatting**: Both configurations failed `Q14` with an empty answer (`""`, counted under `missing_citations`), and 256-token failed `Q19` because the model emitted `[ S1 ]` with internal spaces that did not match `HANDLE_PATTERN`.
+4. **False Refusal on Informal Multi-Part Queries (`Q16`)**: Both indexes retrieved `elderline_14567` at rank 1 (`score=0.5516`), yet the LLM refused (`"I don't know from these sources"`), showing a precision/refusal sensitivity trade-off on stressed-family phrasing.
+
+See [`eval/EVALUATION_REPORT.md`](eval/EVALUATION_REPORT.md) for the 5 worst examples and [`eval/HUMAN_REVIEW_WORKSHEET.md`](eval/HUMAN_REVIEW_WORKSHEET.md) for manual citation review.
 
 ---
 
@@ -234,7 +252,7 @@ Both indexes use `tiktoken` (`cl100k_base`) with a `32`-token overlap and identi
 
 ## AI Coding Tools & Their Uses
 
-- **Antigravity (Gemini)**: Used for repository scaffolding, modular RAG implementation (`src/`), unit/integration test authoring (`tests/`), evaluation metric auditing (`eval/`), and documentation structuring. All metric logic, manifest entries, and corpus counts were verified against actual code and tool outputs.
+- **Antigravity (Gemini)**: Used for repository scaffolding, modular RAG implementation (`src/`), Streamlit UI (`app.py`), unit/integration test authoring (`tests/`), evaluation metric auditing (`eval/`), evidence worksheet preparation, and question-skeleton drafting. All 25 final `question_text` entries were manually authored/approved by the candidate, all metric results were read directly from `eval/comparison_256_vs_512.json`, and human citation correctness (`human_citation_correct`) remains explicitly pending manual review.
 
 ---
 

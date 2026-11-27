@@ -1,1 +1,268 @@
-[]
+[
+  {
+    "question_id": "Q01",
+    "question_text": "What is the Elderline toll-free helpline number in India, and on which days and at what times can senior citizens call it?",
+    "answerability": "answerable",
+    "question_category": "direct_factual",
+    "expected_source_doc_ids": ["elderline_14567", "pib_senior_welfare_2"],
+    "expected_answer_facts": [
+      "Toll-free number 14567",
+      "Operates 7 days a week from 8:00 AM to 8:00 PM"
+    ]
+  },
+  {
+    "question_id": "Q02",
+    "question_text": "When was India's Elderline helpline launched, and which international observance marked the occasion?",
+    "answerability": "answerable",
+    "question_category": "direct_factual",
+    "expected_source_doc_ids": ["elderline_14567", "pib_senior_welfare_2"],
+    "expected_answer_facts": [
+      "Dedicated or launched on 1 October 2021",
+      "International Day for Older Persons"
+    ]
+  },
+  {
+    "question_id": "Q03",
+    "question_text": "What health coverage is provided under Ayushman Bharat PM-JAY for citizens aged 70 and above, and does income affect eligibility?",
+    "answerability": "answerable",
+    "question_category": "direct_factual",
+    "expected_source_doc_ids": ["ab_pmjay_70plus_pib", "pib_senior_welfare_2"],
+    "expected_answer_facts": [
+      "Health coverage up to Rs. 5 lakh per family per year",
+      "Covers secondary and tertiary care hospitalisation",
+      "Applies to all citizens aged 70 years and above irrespective of socio-economic status"
+    ]
+  },
+  {
+    "question_id": "Q04",
+    "question_text": "Which telemedicine platform offers free home-based medical consultations for elderly people, including those with chronic conditions?",
+    "answerability": "answerable",
+    "question_category": "direct_factual",
+    "expected_source_doc_ids": ["pib_nphce"],
+    "expected_answer_facts": [
+      "e-Sanjeevani telemedicine platform under NPHCE",
+      "Provides free home-based medical consultations for chronic conditions"
+    ]
+  },
+  {
+    "question_id": "Q05",
+    "question_text": "Which ministry implements the Indira Gandhi National Old Age Pension Scheme, and under which government programme does it operate?",
+    "answerability": "answerable",
+    "question_category": "direct_factual",
+    "expected_source_doc_ids": ["pib_ignoaps_rvy"],
+    "expected_answer_facts": [
+      "Implemented under National Social Assistance Programme (NSAP)",
+      "Implemented by Ministry of Rural Development"
+    ]
+  },
+  {
+    "question_id": "Q06",
+    "question_text": "What guaranteed monthly pension amounts can subscribers receive under Atal Pension Yojana after turning 60?",
+    "answerability": "answerable",
+    "question_category": "direct_factual",
+    "expected_source_doc_ids": ["pib_apy_enrollments"],
+    "expected_answer_facts": [
+      "Guaranteed minimum monthly pension of Rs. 1,000, Rs. 2,000, Rs. 3,000, Rs. 4,000, or Rs. 5,000",
+      "Payable after age 60 years"
+    ]
+  },
+  {
+    "question_id": "Q07",
+    "question_text": "Under the Maintenance and Welfare of Parents and Senior Citizens Act, are daughters responsible for maintaining their parents just like sons?",
+    "answerability": "answerable",
+    "question_category": "direct_factual",
+    "expected_source_doc_ids": ["mwpsc_act_faq_dosje"],
+    "expected_answer_facts": [
+      "Both sons and daughters (including daughters-in-law and sons-in-law) are equally liable for maintenance under the Act"
+    ]
+  },
+  {
+    "question_id": "Q08",
+    "question_text": "What NALSA scheme provides free legal assistance to senior citizens, and where can they receive these services?",
+    "answerability": "answerable",
+    "question_category": "direct_factual",
+    "expected_source_doc_ids": ["pib_nalsa_mwpsc"],
+    "expected_answer_facts": [
+      "NALSA Legal Services to Senior Citizens Scheme, 2016",
+      "Offers free legal aid and legal service clinics at tribunals and old age homes"
+    ]
+  },
+  {
+    "question_id": "Q09",
+    "question_text": "Which organization implements Rashtriya Vayoshri Yojana, and when was the scheme launched?",
+    "answerability": "answerable",
+    "question_category": "direct_factual",
+    "expected_source_doc_ids": ["dosje_rvy"],
+    "expected_answer_facts": [
+      "Artificial Limbs Manufacturing Corporation (ALIMCO) is the sole implementing agency",
+      "Launched on 1 April 2017"
+    ]
+  },
+  {
+    "question_id": "Q10",
+    "question_text": "What special counter facilities does RBI advise banks to provide for senior citizens and persons with disabilities?",
+    "answerability": "answerable",
+    "question_category": "direct_factual",
+    "expected_source_doc_ids": ["rbi_senior_facilities"],
+    "expected_answer_facts": [
+      "Banks advised to provide a clearly identifiable dedicated or priority counter for senior citizens and differently abled persons"
+    ]
+  },
+  {
+    "question_id": "Q11",
+    "question_text": "If a family is already covered under Ayushman Bharat PM-JAY, what additional health coverage is available for members aged 70 or above, and is it separate from the coverage for younger family members?",
+    "answerability": "answerable",
+    "question_category": "multi_condition",
+    "expected_source_doc_ids": ["ab_pmjay_70plus_pib"],
+    "expected_answer_facts": [
+      "Additional top-up cover of up to Rs. 5 lakh per year",
+      "Exclusive to senior citizens aged 70 years and above in families already covered under AB PM-JAY",
+      "Separate from cover available to family members below 70 years"
+    ]
+  },
+  {
+    "question_id": "Q12",
+    "question_text": "Under EPS-95, what are the minimum service requirement, wage ceiling, employer and government contribution rates, and earliest age for a reduced pension?",
+    "answerability": "answerable",
+    "question_category": "multi_condition",
+    "expected_source_doc_ids": ["epfo_eps95"],
+    "expected_answer_facts": [
+      "Minimum 10 years of eligible service (disability pension available without 10 years)",
+      "Wage ceiling Rs. 15,000 per month",
+      "Employer contributes 8.33% and Central Government contributes 1.16%",
+      "Reduced pension available from age 50"
+    ]
+  },
+  {
+    "question_id": "Q13",
+    "question_text": "Who can enroll in Atal Pension Yojana in terms of age and citizenship, and are current or former income-taxpayers eligible?",
+    "answerability": "answerable",
+    "question_category": "multi_condition",
+    "expected_source_doc_ids": ["pib_apy_overview"],
+    "expected_answer_facts": [
+      "Open to all Indian citizens aged 18 to 40 years",
+      "Excludes those who are or have been income tax payers"
+    ]
+  },
+  {
+    "question_id": "Q14",
+    "question_text": "What are the BPL and monthly income eligibility criteria for Rashtriya Vayoshri Yojana, which documents are required, and what special delivery facility is available for people aged 80 or above?",
+    "answerability": "answerable",
+    "question_category": "multi_condition",
+    "expected_source_doc_ids": ["dosje_rvy"],
+    "expected_answer_facts": [
+      "BPL senior citizens with monthly income not more than Rs. 15,000",
+      "Devices provided at doorsteps for senior citizens aged 80 years or more",
+      "Mandatory documents include Aadhaar card and Income Certificate"
+    ]
+  },
+  {
+    "question_id": "Q15",
+    "question_text": "Under the Integrated Programme for Senior Citizens, what assistance is provided to organizations running elderly homes, how many residents can the homes accommodate, and which facilities are free?",
+    "answerability": "answerable",
+    "question_category": "multi_condition",
+    "expected_source_doc_ids": ["dosje_ipsrc"],
+    "expected_answer_facts": [
+      "Grant-in-aid provided to NGOs/VOs",
+      "Senior Citizens' Home for 25 senior citizens or Senior Citizens' Homes for Women for 50 elderly women",
+      "Food, shelter, care/medicare, and recreation facilities provided free of cost"
+    ]
+  },
+  {
+    "question_id": "Q16",
+    "question_text": "My elderly uncle is being neglected at home, and we're worried about his safety. Is there a free helpline that can help him, what kind of support does it provide, and when can we call?",
+    "answerability": "answerable",
+    "question_category": "informal_stressed_family",
+    "expected_source_doc_ids": ["elderline_14567"],
+    "expected_answer_facts": [
+      "Call toll-free 14567 (8:00 AM to 8:00 PM, all seven days)",
+      "Provides field intervention, care and support for abused elderly, legal/dispute resolution, and emotional support"
+    ]
+  },
+  {
+    "question_id": "Q17",
+    "question_text": "My grandfather's children aren't helping him financially, and he can't afford a lawyer. Are his children legally responsible for supporting him, and where can he get free legal help?",
+    "answerability": "answerable",
+    "question_category": "informal_stressed_family",
+    "expected_source_doc_ids": ["mwpsc_act_faq_dosje", "pib_nalsa_mwpsc"],
+    "expected_answer_facts": [
+      "Sons and daughters are equally liable for maintenance under the MWPSC Act, 2007",
+      "District Magistrate has powers and duties under Section 22 to ensure implementation",
+      "NALSA Legal Services to Senior Citizens Scheme, 2016 offers free legal aid"
+    ]
+  },
+  {
+    "question_id": "Q18",
+    "question_text": "My father is a pensioner and finds it difficult to visit the bank. Can we complete his life certificate digitally, and what details and biometric verification would he need?",
+    "answerability": "answerable",
+    "question_category": "informal_stressed_family",
+    "expected_source_doc_ids": ["jeevan_pramaan"],
+    "expected_answer_facts": [
+      "Biometric-enabled Aadhaar authentication (fingerprint or iris)",
+      "Requires Aadhaar number, Pension Payment Order, bank account, bank name, and mobile number",
+      "Available via PC/mobile application or Jeevan Pramaan Centre"
+    ]
+  },
+  {
+    "question_id": "Q19",
+    "question_text": "My mother is 65, and her bank is deducting TDS from her fixed-deposit interest even though her total income is low. Is there a form she can submit to avoid eligible deductions?",
+    "answerability": "answerable",
+    "question_category": "informal_stressed_family",
+    "expected_source_doc_ids": ["incometax_senior_citizens"],
+    "expected_answer_facts": [
+      "Form 15H is the declaration for a resident individual aged 60 years or more",
+      "Used to claim eligible receipts without TDS deduction when estimated tax liability on total income for the relevant financial year is nil, subject to applicable conditions"
+    ]
+  },
+  {
+    "question_id": "Q20",
+    "question_text": "My father recently retired and wants to stay active by doing some work. Is there a government programme that connects experienced senior citizens with companies?",
+    "answerability": "answerable",
+    "question_category": "informal_stressed_family",
+    "expected_source_doc_ids": ["dosje_avyay"],
+    "expected_answer_facts": [
+      "Senior Citizen Opportunities for Productive Engagement (SCOPE) portal",
+      "Brings experienced senior citizens and private enterprises together by virtual matching of preferences"
+    ]
+  },
+  {
+    "question_id": "Q21",
+    "question_text": "What is the current annual interest rate for the Senior Citizens Savings Scheme, and what is its maximum deposit limit?",
+    "answerability": "unanswerable",
+    "question_category": "unanswerable",
+    "expected_source_doc_ids": [],
+    "expected_answer_facts": []
+  },
+  {
+    "question_id": "Q22",
+    "question_text": "What percentage discount does Indian Railways currently offer senior citizens on train tickets?",
+    "answerability": "unanswerable",
+    "question_category": "unanswerable",
+    "expected_source_doc_ids": [],
+    "expected_answer_facts": []
+  },
+  {
+    "question_id": "Q23",
+    "question_text": "Does Ayushman Bharat PM-JAY cover dental implants or cosmetic dental procedures for people aged 70 and above?",
+    "answerability": "unanswerable",
+    "question_category": "unanswerable",
+    "expected_source_doc_ids": [],
+    "expected_answer_facts": []
+  },
+  {
+    "question_id": "Q24",
+    "question_text": "What exact municipal property-tax discount and passport application fee concession are available to senior citizens in India?",
+    "answerability": "unanswerable",
+    "question_category": "unanswerable",
+    "expected_source_doc_ids": [],
+    "expected_answer_facts": []
+  },
+  {
+    "question_id": "Q25",
+    "question_text": "What are all the official Vayoshreshtha Samman award categories, and how much cash prize is given under each category?",
+    "answerability": "unanswerable",
+    "question_category": "unanswerable",
+    "expected_source_doc_ids": [],
+    "expected_answer_facts": []
+  }
+]
