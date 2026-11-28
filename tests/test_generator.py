@@ -205,3 +205,160 @@ def test_grounding_prompt_guards_entity_and_temporal_scope_and_flags_false_citat
     assert false_cite_res.refused is False
     assert false_cite_res.citation_valid is False
     assert false_cite_res.error_type == "malformed_citations"
+
+
+def test_wrong_entity_citation_refused():
+    # Chunk discusses Scheme Alpha and mentions Scheme Beta only as a reference/ceiling
+    mixed_chunk = [
+        FakeRetrievedChunk(
+            chunk=Chunk(
+                chunk_id="mixed_scheme__c256__0001",
+                doc_id="mixed_scheme",
+                title="Implementation of Welfare Schemes",
+                source_url="https://pib.gov.in/mixed",
+                section="Social Security",
+                token_count=60,
+                text=(
+                    "Ministry launched Scheme Alpha for senior citizens. "
+                    "In subsequent years, there will be an annual reset in line with the "
+                    "applicable rate of Scheme Beta upto a ceiling of 7.75% with fresh appraisal. "
+                    "Minimum purchase price under the scheme is Rs. 1,62,162/- and the maximum "
+                    "purchase price is Rs. 15 lakh per subscriber."
+                ),
+            ),
+            score=0.50,
+        )
+    ]
+
+    # Even if the LLM cites [S1] and transfers Scheme Alpha's figures to Scheme Beta, refuse
+    res = generate_grounded_answer(
+        "What is the annual interest rate and maximum deposit limit for Scheme Beta?",
+        mixed_chunk,
+        client=FakeLLMClient("Scheme Beta offers 7.75% and a maximum deposit of Rs. 15 lakh [S1]."),
+    )
+    assert res.refused is True
+    assert res.answer == REFUSAL_TEXT
+    assert res.error_type == "evidence_insufficient"
+    assert res.citations == []
+
+    # Citing a chunk that does not mention the queried entity at all is also refused
+    res_missing = generate_grounded_answer(
+        "What is the annual interest rate for Scheme Gamma?",
+        mixed_chunk,
+        client=FakeLLMClient("Scheme Gamma offers 7.75% [S1]."),
+    )
+    assert res_missing.refused is True
+    assert res_missing.answer == REFUSAL_TEXT
+    assert res_missing.error_type == "evidence_insufficient"
+
+
+def test_historical_figures_presented_as_current_refused():
+    dated_chunk = [
+        FakeRetrievedChunk(
+            chunk=Chunk(
+                chunk_id="dated_scheme__c256__0001",
+                doc_id="dated_scheme",
+                title="Scheme Delta Overview",
+                source_url="https://pib.gov.in/delta",
+                section="Rates",
+                token_count=40,
+                text=(
+                    "Scheme Delta is open for subscription upto 31st March 2023 and offers "
+                    "an assured rate of return of 7.40% per annum for the year 2020-21."
+                ),
+            ),
+            score=0.75,
+        )
+    ]
+
+    res = generate_grounded_answer(
+        "What is the current annual interest rate for Scheme Delta?",
+        dated_chunk,
+        client=FakeLLMClient("The current annual interest rate for Scheme Delta is 7.40% [S1]."),
+    )
+    assert res.refused is True
+    assert res.answer == REFUSAL_TEXT
+    assert res.error_type == "evidence_insufficient"
+    assert res.initial_failure is not None and "stale_temporal_evidence" in res.initial_failure
+
+
+def test_unsupported_numerical_answer_refused():
+    retrieved = [
+        FakeRetrievedChunk(
+            chunk=Chunk(
+                chunk_id="pmjay__c256__0000",
+                doc_id="pmjay",
+                title="Ayushman Bharat PM-JAY",
+                source_url="https://pib.gov.in/pmjay",
+                section="Coverage",
+                token_count=30,
+                text="Ayushman Bharat PM-JAY provides health coverage up to Rs. 5 lakh per family per year.",
+            ),
+            score=0.85,
+        )
+    ]
+
+    # LLM fabricates Rs. 10 lakh while citing valid handle [S1]
+    res = generate_grounded_answer(
+        "What health coverage is provided under Ayushman Bharat PM-JAY?",
+        retrieved,
+        client=FakeLLMClient("Ayushman Bharat PM-JAY provides up to Rs. 10 lakh per year [S1]."),
+    )
+    assert res.refused is True
+    assert res.answer == REFUSAL_TEXT
+    assert res.error_type == "evidence_insufficient"
+    assert res.initial_failure == "unsupported_numeric:amount=10 lakh"
+
+
+def test_answerable_elderline_and_pmjay_queries_not_falsely_refused():
+    elderline_chunks = [
+        FakeRetrievedChunk(
+            chunk=Chunk(
+                chunk_id="elderline_14567__c256__0000",
+                doc_id="elderline_14567",
+                title="Elderline - National Helpline for Senior Citizens (14567) (DoSJE)",
+                source_url="https://www.dosje.gov.in/elderline",
+                section="Overview",
+                token_count=40,
+                text=(
+                    "Elderline was dedicated to the Nation on 01st October, 2021. "
+                    "It is a toll-free number 14567 which operates on all days from 8:00 AM to 8:00 PM."
+                ),
+            ),
+            score=0.88,
+        )
+    ]
+    res_elderline = generate_grounded_answer(
+        "What is the Elderline toll-free helpline number in India?",
+        elderline_chunks,
+        client=FakeLLMClient("The Elderline toll-free helpline number is 14567, operating 8:00 AM to 8:00 PM [S1]."),
+    )
+    assert res_elderline.refused is False
+    assert res_elderline.citation_valid is True
+    assert res_elderline.citations == ["elderline_14567__c256__0000"]
+
+    pmjay_chunks = [
+        FakeRetrievedChunk(
+            chunk=Chunk(
+                chunk_id="pib_senior_welfare_2__c256__0000",
+                doc_id="pib_senior_welfare_2",
+                title="Atal Vayo Abhyuday Yojana & Elderline Support Overview (PIB)",
+                source_url="https://pib.gov.in/welfare",
+                section="Healthcare",
+                token_count=40,
+                text=(
+                    "Under Ayushman Bharat-Pradhan Mantri Jan Arogya Yojana (AB-PMJAY), "
+                    "health insurance coverage of ₹5 lakh is provided to all senior citizens aged 70 years and above."
+                ),
+            ),
+            score=0.82,
+        )
+    ]
+    res_pmjay = generate_grounded_answer(
+        "What health coverage is provided under Ayushman Bharat PM-JAY for citizens aged 70 and above?",
+        pmjay_chunks,
+        client=FakeLLMClient("Ayushman Bharat PM-JAY provides health coverage of ₹5 lakh per year [S1]."),
+    )
+    assert res_pmjay.refused is False
+    assert res_pmjay.citation_valid is True
+    assert res_pmjay.citations == ["pib_senior_welfare_2__c256__0000"]

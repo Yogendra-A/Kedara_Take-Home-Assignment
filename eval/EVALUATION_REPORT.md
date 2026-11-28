@@ -1,5 +1,7 @@
 # Kedara — Evaluation Report (256 vs 512 Tokens)
 
+> **Baseline Preservation Notice**: The 25-question metrics in this report reflect the **pre-fix baseline** stored in `eval/comparison_256_vs_512.json` (preserved unmodified). Post-fix verification results are documented separately in the **Post-Fix Regression & End-to-End Checks** section below.
+
 - **Corpus**: `21` relevant official documents (`96` deduplicated sections; `3` noisy/irrelevant and `1` failed PDF excluded)
 - **Embedding Model**: `all-MiniLM-L6-v2` (`384`-D L2-normalized)
 - **Top-K**: `5` | **Min Score**: `0.2`
@@ -57,3 +59,17 @@
 - **Original Citation**: `[S1]` (`pib_mwpsc_act_implementation__c256__0019`, `doc_id=pib_mwpsc_act_implementation`, `section=PROBLEMS OF AGED PEOPLE`, `similarity=0.6027`).
 - **Root Cause**: `scss_pib` was excluded (navigation-only), so dense retrieval returned a near-miss chunk describing LIC's PMVVY (2020–23), and the LLM transferred PMVVY's ceiling (7.75%) and purchase price (₹15 lakh) onto SCSS.
 - **Fix & Outcome**: Tightened `SYSTEM_PROMPT` in `src/generator.py` with entity/scope-match and temporal/completeness rules; 256-token refused `Q21` (`Refusal Recall = 1.0`), while 512-token still failed `Q21` (`Refusal Recall = 0.8`), showing that larger chunks can still induce entity conflation when a related scheme is mentioned in context.
+
+## Post-Fix Regression & End-to-End Checks (Current System)
+
+Prompt-only guardrails proved non-deterministic on the 256-token index as well (returning `7.75%` and `₹15 lakh` citing `[S3]` = `pib_mwpsc_act_implementation__c256__0019`, which describes PMVVY's 2020–23 ceiling rather than SCSS). To enforce grounding deterministically, `verify_answer_evidence()` was added to `src/generator.py` after `resolve_handle_citations()`.
+
+- **Docker Full Test Suite (`kedara-rag:py311`)**: `35 passed in 43.86s` (`tests/test_app.py`, `tests/test_chunker.py`, `tests/test_corpus.py`, `tests/test_eval.py`, `tests/test_generator.py`, `tests/test_index_builder.py`, `tests/test_ingest.py`, `tests/test_retriever.py`), including regression tests for wrong-entity citations, historical figures presented as current, unsupported numerical claims, and answerable Elderline/PM-JAY queries.
+- **Fresh End-to-End FAISS + Groq Checks (256-token & 512-token)**:
+  - **Elderline** (*"What is the Elderline helpline number for senior citizens?"*): Supported answer (`14567`) with valid citations on both `256` (`['S1', 'S5']`) and `512` (`['S1', 'S5']`).
+  - **PM-JAY 70+** (*"What health coverage is provided under Ayushman Bharat PM-JAY for citizens aged 70 and above, and does income affect eligibility?"*): Supported answer (`₹5 lakh`, irrespective of socio-economic status) with valid citations on both `256` (`['S3', 'S4']`) and `512` (`['S1', 'S2']`).
+  - **SCSS** (*"What is the current annual interest rate and maximum deposit limit for the Senior Citizens Savings Scheme in India?"*): Refused with `"I don't know from these sources"` on both `256` (`pib_mwpsc_act_implementation__c256__0019` at `[S3]`, caught by `verify_answer_evidence` as `numeric_entity_mismatch:percent=7.75`) and `512` (`pib_mwpsc_act_implementation__c512__0009` at `[S1]`).
+- **Rule-Based Evidence Verification Limitations**:
+  1. Entity extraction relies on capitalized phrases and acronyms in the question; all-lowercase or paraphrased scheme references may not trigger entity-attribution checks.
+  2. Numerical checks verify percentages and monetary/scaled amounts (`₹`, `Rs.`, `INR`, `lakh`, `crore`), not every unscaled integer or qualitative claim.
+  3. Temporal checks rely on explicit period-bounding phrases (`for the year`, `upto`, `until`, `as on`, etc.) paired with past years; undated stale passages or subtle non-numeric semantic errors require full NLI or human review.

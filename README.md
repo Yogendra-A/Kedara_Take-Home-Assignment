@@ -195,7 +195,8 @@ Both indexes use `tiktoken` (`cl100k_base`) with a `32`-token overlap and identi
 
 - **Short Handle Citations (`[S1]`..`[Sn]`)**: Retrieved chunks are presented to the LLM with deterministic rank-ordered handles (`[S1]` through `[Sk]`). `resolve_handle_citations()` validates that every cited handle exists in the retrieved handle map and resolves it back to `chunk_id`, `doc_id`, `title`, `section`, `source_url`, and similarity score.
 - **Single Constrained Retry**: If the initial response omits citations or cites an unknown handle, `generate_grounded_answer()` runs one constrained retry prompting the model to cite only valid handles or refuse. `initial_failure` preserves whether recovery was needed.
-- **Strict Refusal**: The system returns `"I don't know from these sources"` (`refused=True`, `error_type="evidence_insufficient"`) when retrieval is empty, `top_1_score < min_score` (default `0.2`), or the LLM outputs the refusal string.
+- **Post-Generation Evidence Verification (`verify_answer_evidence`)**: After handle resolution, `generate_grounded_answer()` verifies (1) entity/scheme matching between the question and cited chunks, (2) numerical claim support and local entity attribution for percentages and monetary/scaled amounts (rejecting figures attributed to a different scheme or framed as another scheme's ceiling/threshold), and (3) temporal alignment when time-sensitive queries (`current`, `latest`, or explicit years) are backed only by period-bounded historical years. If support cannot be established, it overrides the output with `REFUSAL_TEXT` (`refused=True`, `error_type="evidence_insufficient"`).
+- **Strict Refusal**: The system returns `"I don't know from these sources"` (`refused=True`, `error_type="evidence_insufficient"`) when retrieval is empty, `top_1_score < min_score` (default `0.2`), the LLM outputs the refusal string, or `verify_answer_evidence()` fails.
 - **Separate Failure Tracking**: `eval/run_eval.py` and `eval/metrics.py` record `missing_citations`, `malformed_citations`, and `provider_error` separately from refusals so API/rate-limit failures never inflate refusal metrics.
 
 ---
@@ -215,7 +216,9 @@ Both indexes use `tiktoken` (`cl100k_base`) with a `32`-token overlap and identi
 
 ---
 
-## Results (256 vs 512 Controlled Comparison)
+## Results (Pre-Fix 256 vs 512 Baseline Benchmark)
+
+> **Baseline Preservation Note**: The table below records the **pre-fix baseline** from `eval/comparison_256_vs_512.json` prior to adding `verify_answer_evidence()`. These numbers are preserved unmodified as the baseline and do not represent a full re-run of the post-fix system. See [`eval/EVALUATION_REPORT.md`](eval/EVALUATION_REPORT.md) for post-fix regression checks.
 
 | Metric | 256-token Index (`508` vectors) | 512-token Index (`280` vectors) |
 | --- | --- | --- |
@@ -245,7 +248,7 @@ See [`eval/EVALUATION_REPORT.md`](eval/EVALUATION_REPORT.md) for the 5 worst exa
 - **Scanned PDF extraction failure**: `pib_vayoshreshtha_samman` (`doc20228582001.pdf`) extracts `0` characters via `pypdf` because it is an image-based PDF without embedded text or OCR.
 - **Short JS-rendered PIB pages**: `pib_jeevan_pramaan_dlc` (`300` chars) and `scss_pib` (`349` chars) yield minimal text under static HTML parsing.
 - **Live government portal timeouts**: `nisd.gov.in` and `jeevanpramaan.gov.in` exhibited intermittent timeouts during live fetching; mitigated for reproducibility by committing `data/processed/sections.jsonl`.
-- **CLI-only interface**: No web frontend is implemented.
+- **Rule-based evidence verification limitations**: `verify_answer_evidence()` relies on capitalized entity/acronym extraction (lowercase or paraphrased scheme names may be missed), checks percentages and monetary/scaled amounts rather than every unscaled integer or qualitative claim, and detects stale temporal evidence via explicit period-bounding phrases (`for the year`, `upto`, `as on`, etc.) rather than full semantic NLI.
 - **Dependency constraint**: `sentence-transformers==5.6.0` / `transformers` requires `huggingface-hub>=1.5.0,<2.0` (pinned in `requirements.txt`).
 
 ---
